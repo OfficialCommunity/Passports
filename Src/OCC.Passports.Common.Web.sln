@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Common", "OCC.Passports.Common\OCC.Passports.Common.csproj", "{B8677FF3-2242-4591-A6CA-69D73F599880}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Common.Web", "OCC.Passports,Common.Web\OCC.Passports.Common.Web.csproj", "{63251506-5F18-4326-8FFA-05AB5C6856CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Common.Web", "OCC.Passports.Common.Web\OCC.Passports.Common.Web.csproj", "{63251506-5F18-4326-8FFA-05AB5C6856CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
