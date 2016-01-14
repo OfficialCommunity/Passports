@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>OCC.Passports.Storage.Null</id>
+    <version>1.0.0</version>
+    <title>OCC Passports</title>
+    <authors>officialcommunity</authors>
+    <owners>officialcommunity</owners>
+    <projectUrl>https://github.com/OfficialCommunity/Passports</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>OCC Passports Storage Null</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="OCC.Passports.Common" version="1.0.0" />
+        <dependency id="PostSharp" version="4.2.17" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+  <file src="..\Src\OCC.Passports.Storage.Null\bin\Release\OCC.Passports.Storage.Null.dll" target="lib\net45\" />
+  <file src="..\Src\OCC.Passports.Storage.Null\bin\Release\OCC.Passports.Storage.Null.pdb" target="lib\net45\" />
+    </files>
+</package>

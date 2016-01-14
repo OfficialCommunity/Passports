@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>7baa8ff0-b0b4-436b-8c8b-3d98e4a0d0b1</ProjectGuid>
+    <OutputPath>Bin\</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NuBuildVersionSource>Library</NuBuildVersionSource>
+    <NuBuildVersionFileName>True</NuBuildVersionFileName>
+    <NuBuildAddBinariesToSubfolder>True</NuBuildAddBinariesToSubfolder>
+    <NuBuildIncludePdbs>True</NuBuildIncludePdbs>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="OCC.Passports.Common.nuspec">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OCC.Passports.Common.Web.nuspec">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OCC.Passports.Storage.Logentries.nuspec">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OCC.Passports.Storage.Null.nuspec">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\NuBuild\v1\NuBuild.targets" />
+</Project>

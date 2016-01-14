@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>OCC.Passports.Common</id>
+    <version>1.0.0</version>
+    <title>OCC Passports</title>
+    <authors>officialcommunity</authors>
+    <owners>officialcommunity</owners>
+    <projectUrl>https://github.com/OfficialCommunity/Passports</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>OCC Passports Common</description>
+
+    <dependencies>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="OCC.Passports.Common" version="1.0.0" />
+        <dependency id="Newtonsoft.Json" version="8.0.1" />
+        <dependency id="PostSharp" version="4.2.17" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\Src\OCC.Passports.Common\bin\Release\OCC.Passports.Common.dll" target="lib\net45\" />
+    <file src="..\Src\OCC.Passports.Common\bin\Release\OCC.Passports.Common.pdb" target="lib\net45\" />
+  </files>
+</package>
