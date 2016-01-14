@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>7baa8ff0-b0b4-436b-8c8b-3d98e4a0d0b1</ProjectGuid>
-    <OutputPath>Bin\</OutputPath>
+    <OutputPath>publish\</OutputPath>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <NuBuildVersionSource>Library</NuBuildVersionSource>
     <NuBuildVersionFileName>True</NuBuildVersionFileName>
