@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Domains;
 using OCC.Passports.Common.Infrastructure;
@@ -14,8 +15,10 @@ namespace OCC.Passports.Common.Sample.Console
         {
             PassportLevel.Current = PassportLevel.Trace;
 
-            Task t = WithController();
-            t.Wait();
+            var result = WithController().Result;
+
+            System.Console.WriteLine("press any key to continue");
+            System.Console.ReadKey();
 
             Storage.Flush();
         }
@@ -24,7 +27,7 @@ namespace OCC.Passports.Common.Sample.Console
         {
             var controller = new Controller(new Passport(Storage));
 
-            return await controller.Calculate("1", 10, "/", 2);
+            return await controller.Calculate("1", 10, "/", 0);
 
         }
 

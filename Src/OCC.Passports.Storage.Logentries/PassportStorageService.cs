@@ -40,7 +40,6 @@ namespace OCC.Passports.Storage.Logentries
             }
         }
 
-
         public void Flush()
         {
             var numWaits = 3;
