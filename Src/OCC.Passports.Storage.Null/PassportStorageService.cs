@@ -7,5 +7,9 @@ namespace OCC.Passports.Storage.Null
         public void Store(dynamic context)
         {
         }
+
+        public void Flush()
+        {
+        }
     }
 }

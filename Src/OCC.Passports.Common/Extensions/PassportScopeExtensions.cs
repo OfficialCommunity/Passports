@@ -71,5 +71,70 @@ namespace OCC.Passports.Common.Extensions
                 }
             }
         }
+
+        public static async Task<T> ScopeAsync<T>(this IPassport self, Func<Task<T>> actionAsync)
+            where T : StandardResponse
+        {
+            try
+            {
+                return await actionAsync();
+            }
+            catch (Exception e)
+            {
+                if (!PassportSettings.Settings.ExcludedExceptions.Any(x => x.Equals(e.GetType().FullName, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    self.StampException(e);
+                }
+
+                var standardError = new StandardError();
+
+                standardError.Errors.Add(Constants.Passports.KeyError);
+
+                var instance = Activator.CreateInstance<T>();
+                instance.StandardError = standardError;
+
+                return instance;
+            }
+            finally
+            {
+                if ( self != null)
+                {
+                    self.PopScope();
+                }
+            }
+        }
+
+        public static T Scope<T>(this IPassport self, Func<T> action)
+            where T : StandardResponse
+        {
+            try
+            {
+                return action();
+            }
+            catch (Exception e)
+            {
+                if (!PassportSettings.Settings.ExcludedExceptions.Any(x => x.Equals(e.GetType().FullName, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    self.StampException(e);
+                }
+
+                var standardError = new StandardError();
+
+                standardError.Errors.Add(Constants.Passports.KeyError);
+
+                var instance = Activator.CreateInstance<T>();
+                instance.StandardError = standardError;
+
+                return instance;
+            }
+            finally
+            {
+                if (self != null)
+                {
+                    self.PopScope();
+                }
+            }
+        }
+
     }
 }

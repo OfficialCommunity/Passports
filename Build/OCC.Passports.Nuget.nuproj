@@ -4,7 +4,7 @@
     <ProjectGuid>7baa8ff0-b0b4-436b-8c8b-3d98e4a0d0b1</ProjectGuid>
     <OutputPath>publish\</OutputPath>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <NuBuildVersionSource>Library</NuBuildVersionSource>
+    <NuBuildVersionSource>Auto</NuBuildVersionSource>
     <NuBuildVersionFileName>True</NuBuildVersionFileName>
     <NuBuildAddBinariesToSubfolder>True</NuBuildAddBinariesToSubfolder>
     <NuBuildIncludePdbs>True</NuBuildIncludePdbs>

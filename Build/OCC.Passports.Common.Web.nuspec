@@ -3,22 +3,23 @@
   <metadata>
     <id>OCC.Passports.Common.Web</id>
     <version>1.0.0</version>
-    <title>OCC Passports</title>
+    <title>OCC Passports Web - MVC and WebApi</title>
     <authors>officialcommunity</authors>
     <owners>officialcommunity</owners>
     <projectUrl>https://github.com/OfficialCommunity/Passports</projectUrl>
+    <iconUrl>http://www.officialcommunity.com/images/logo_occ_32.png </iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>OCC Passports Common Web</description>
+    <description>OCC Passports Common Web for MVC and WebApi</description>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
         <dependency id="OCC.Passports.Common" version="1.0.0" />
-        <dependency id="Microsoft.AspNet.Mvc" version="5.2.3" />
+        <dependency id="Microsoft.AspNet.Mvc" version="5.2.3"  />
         <dependency id="Microsoft.AspNet.Razor" version="3.2.3"  />
         <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3"  />
-        <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3"  />
+        <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3" />
         <dependency id="Microsoft.AspNet.WebPages" version="3.2.3"  />
         <dependency id="Microsoft.Web.Infrastructure" version="1.0.0.0"  />
-        <dependency id="Newtonsoft.Json" version="8.0.1" />
+        <dependency id="Newtonsoft.Json" version="8.0.2"  />
         <dependency id="PostSharp" version="4.2.17"  />
       </group>
     </dependencies>

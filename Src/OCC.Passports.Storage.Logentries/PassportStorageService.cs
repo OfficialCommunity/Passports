@@ -39,5 +39,14 @@ namespace OCC.Passports.Storage.Logentries
                 }
             }
         }
+
+
+        public void Flush()
+        {
+            var numWaits = 3;
+            while (!LogentriesCore.Net.AsyncLogger.AreAllQueuesEmpty(TimeSpan.FromSeconds(5)) && numWaits > 0)
+                numWaits--;
+            
+        }
     }
 }

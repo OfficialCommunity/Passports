@@ -225,6 +225,7 @@ namespace OCC.Passports.Common.Domains
 
             context.Exception = exception;
         }
+
         private static IList<Exception> GetInnerExceptions(Exception exception)
         {
             var ae = exception as AggregateException;

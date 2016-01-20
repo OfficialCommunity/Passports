@@ -5,6 +5,7 @@ using System.Reflection;
 using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Extensions;
 using PostSharp.Aspects;
+using PostSharp.Extensibility;
 
 namespace OCC.Passports.Common.Aspects
 {
@@ -22,10 +23,20 @@ namespace OCC.Passports.Common.Aspects
 
         public override void CompileTimeInitialize(MethodBase method, AspectInfo aspectInfo)
         {
-            _parameterNames = method.GetParameters().Select(p => p.Name).ToArray();
-            if (_sessionParameter != null)
+            if (!typeof(IHasPassport).IsAssignableFrom(method.DeclaringType))
             {
-                _sessionParameterIndex = Array.IndexOf(_parameterNames, _sessionParameter);
+                throw new InvalidAnnotationException(string.Format("{0} does not support {1}"
+                                                , method.DeclaringType.AssemblyQualifiedName
+                                                , typeof(IPassport).AssemblyQualifiedName));
+            }
+
+            _parameterNames = method.GetParameters().Select(p => p.Name).ToArray();
+            if (_sessionParameter == null) return;
+
+            _sessionParameterIndex = Array.IndexOf(_parameterNames, _sessionParameter);
+            if (_sessionParameterIndex == -1)
+            {
+                throw new ArgumentOutOfRangeException(_sessionParameter);
             }
         }
 

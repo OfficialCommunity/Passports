@@ -3,5 +3,6 @@
     public interface IPassportStorageService
     {
         void Store(dynamic context);
+        void Flush();
     }
 }

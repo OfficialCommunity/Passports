@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B8677FF3-2242-4591-A6CA-69D73F599880}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{A142247F-CC0B-406E-8AD9-35D1E91352BF}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OCC.Passports.Common</RootNamespace>
-    <AssemblyName>OCC.Passports.Common</AssemblyName>
+    <RootNamespace>OCC.Passports.Common.Sample.Console</RootNamespace>
+    <AssemblyName>OCC.Passports.Common.Sample.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,19 +32,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup />
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\Build\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PostSharp, Version=4.2.17.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\PostSharp.4.2.17\lib\net35-client\PostSharp.dll</HintPath>
+      <Private>True</Private>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,32 +47,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aspects\LogParametersToPassportAttribute.cs" />
-    <Compile Include="Aspects\UsePassportAttribute.cs" />
-    <Compile Include="Contracts\Services\IPassportStorageService.cs" />
-    <Compile Include="Domains\PassportScope.cs" />
-    <Compile Include="Extensions\PostSharpExtensions.cs" />
-    <Compile Include="Extensions\PassportScopeExtensions.cs" />
-    <Compile Include="Infrastructure\PassportScopeManager.cs" />
-    <Compile Include="PassportSettings.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Contracts\Infrastructure\IHasPassport.cs" />
-    <Compile Include="Contracts\Infrastructure\IPassport.cs" />
-    <Compile Include="Domains\Passport.cs" />
-    <Compile Include="Domains\PassportLevel.cs" />
-    <Compile Include="Extensions\StandardResponseExtensions.cs" />
-    <Compile Include="Extensions\PassportExtensions.cs" />
-    <Compile Include="Infrastructure\HasPassport.cs" />
-    <Compile Include="Infrastructure\StandardError.cs" />
-    <Compile Include="Infrastructure\StandardResponse.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="ControllerUsingService.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="Contracts\IController.cs" />
+    <Compile Include="Contracts\IService.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+    <None Include="Secure.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\OCC.Passports.Common\OCC.Passports.Common.csproj">
+      <Project>{b8677ff3-2242-4591-a6ca-69d73f599880}</Project>
+      <Name>OCC.Passports.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OCC.Passports.Storage.Logentries\OCC.Passports.Storage.Logentries.csproj">
+      <Project>{5a083a4a-7432-4eb9-9259-d8cc59e06dce}</Project>
+      <Name>OCC.Passports.Storage.Logentries</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\PostSharp.4.2.17\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.4.2.17\tools\PostSharp.targets')" />
   <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">

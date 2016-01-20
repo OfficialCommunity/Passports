@@ -3,19 +3,20 @@
   <metadata>
     <id>OCC.Passports.Storage.Logentries</id>
     <version>1.0.0</version>
-    <title>OCC Passports</title>
+    <title>OCC Passports Storage for Logentries</title>
     <authors>officialcommunity</authors>
     <owners>officialcommunity</owners>
     <projectUrl>https://github.com/OfficialCommunity/Passports</projectUrl>
+    <iconUrl>http://www.officialcommunity.com/images/logo_occ_32.png </iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>OCC Passports Storage LogEntries</description>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
         <dependency id="OCC.Passports.Common" version="1.0.0" />
-        <dependency id="Newtonsoft.Json" version="8.0.1" />
-        <dependency id="PostSharp" version="4.2.17" />
-        <dependency id="Microsoft.WindowsAzure.ConfigurationManager" version="3.1.0" />
-      </group>
+        <dependency id="logentries.core" version="2.8.0"  />
+        <dependency id="Microsoft.WindowsAzure.ConfigurationManager"  />
+        <dependency id="Newtonsoft.Json" version="8.0.2"  />
+        <dependency id="PostSharp" version="4.2.17" />      </group>
     </dependencies>
   </metadata>
   <files>
