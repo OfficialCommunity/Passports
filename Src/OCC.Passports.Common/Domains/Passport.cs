@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -206,6 +205,8 @@ namespace OCC.Passports.Common.Domains
             exceptionContext.Message = exception.Message;
             exceptionContext.ClassName = FormatTypeName(exceptionType, true);
             exceptionContext.StackTrace = BuildStackTrace(exception);
+            exceptionContext.HResult = exception.HResult;
+            exceptionContext.HelpURL = exception.HelpLink;
 
             var innerExceptions = GetInnerExceptions(exception);
             if (innerExceptions != null && innerExceptions.Count > 0)
@@ -223,7 +224,7 @@ namespace OCC.Passports.Common.Domains
                 exceptionContext.InnerError = BuildException(exceptionContext, exception.InnerException);
             }
 
-            context.Exception = exception;
+            context.Exception = exceptionContext;
         }
 
         private static IList<Exception> GetInnerExceptions(Exception exception)

@@ -21,7 +21,11 @@ namespace OCC.Passports.Common.Domains
             Name = name;
         }
 
-        public void Record<T>(Expression<Func<T>> expression, string operation = null)
+        public void Record<T>(Expression<Func<T>> expression, string operation = null
+                                , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
+                                , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
+                                , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
+                             )
         {
             var nvp = GetNameAndValue(expression);
             if (nvp == null)
@@ -32,7 +36,7 @@ namespace OCC.Passports.Common.Domains
 
             lock (Lock)
             {
-                var history = new History(Name, name, value, operation);
+                var history = new History(Name, name, value, operation, memberName,sourceFilePath,sourceLineNumber);
 
                 if (!_members.ContainsKey(name))
                 {
@@ -103,13 +107,27 @@ namespace OCC.Passports.Common.Domains
         {
             public string Scope { get; set; }
             public DateTimeOffset Timestamp { get; set; }
+            public string MemberName { get; set; }
+            public string SourceFilePath { get; set; }
+            public int SourceLineNumber { get; set; }
             public string Name { get; set; }
             public string Operation { get; set; }
             public JToken Value { get; set; }
-            public History(string scope, string name, object value, string operation = null)
+
+            public History(string scope
+                            , string name
+                            , object value
+                            , string operation = null
+                            , string memberName = null
+                            , string sourceFilePath = null
+                            , int sourcelineNumber = 0
+                )
             {
                 Scope = scope;
                 Timestamp = new DateTimeOffset(DateTime.UtcNow);
+                MemberName = memberName;
+                SourceFilePath = sourceFilePath;
+                SourceLineNumber = sourcelineNumber;
                 Name = name;
                 Value = JToken.Parse(JsonConvert.SerializeObject(value, Formatting.None));
                 Operation = operation;

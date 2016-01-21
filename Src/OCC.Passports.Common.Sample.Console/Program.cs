@@ -9,13 +9,13 @@ namespace OCC.Passports.Common.Sample.Console
 {
     class Program
     {
-        private static readonly IPassportStorageService Storage = new PassportStorageService();
+        private static readonly IPassportStorageService Storage = new OCC.Passports.Storage.Console.PassportStorageService();
 
         static void Main(string[] args)
         {
             PassportLevel.Current = PassportLevel.Trace;
 
-            var result = WithController().Result;
+            var result = WithControllerUsingService().Result;
 
             System.Console.WriteLine("press any key to continue");
             System.Console.ReadKey();
@@ -31,11 +31,11 @@ namespace OCC.Passports.Common.Sample.Console
 
         }
 
-        public static async Task<StandardResponse<int>> WithControllerUsingServicer()
+        public static async Task<StandardResponse<int>> WithControllerUsingService()
         {
             var controllerUsingService = new ControllerUsingService(new Passport(Storage), new Service());
 
-            return await controllerUsingService.Calculate("2", 10, "/", 2);
+            return await controllerUsingService.Calculate("2", 10, "/", 0);
         }
     }
 }

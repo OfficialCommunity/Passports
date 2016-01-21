@@ -35,12 +35,24 @@ namespace OCC.Passports.Common.Aspects
                     throw new ArgumentOutOfRangeException(_passportParameter);
                 }
 
-                if (!typeof(IPassport).IsAssignableFrom(parameters[_passportParameterIndex].ParameterType))
+                if (typeof (IPassport) != parameters[_passportParameterIndex].ParameterType)
                 {
                     throw new InvalidCastException(string.Format("Cannot convert {0} to {1}"
-                                                    , parameters[_passportParameterIndex].ParameterType.AssemblyQualifiedName
-                                                    , typeof(IPassport).AssemblyQualifiedName)); 
+                        , parameters[_passportParameterIndex].ParameterType.AssemblyQualifiedName
+                        , typeof (IPassport).AssemblyQualifiedName));
                 }
+            }
+            else
+            {
+                // Use first IPassport type 
+
+                var firstPassport = parameters.FirstOrDefault(x => typeof(IPassport) == x.ParameterType);
+                if (firstPassport == null)
+                {
+                    throw new Exception("Missing IPassport parameter.");
+                }
+            
+                _passportParameterIndex = Array.IndexOf(_parameterNames, firstPassport.Name);
             }
 
             // Safeguard - we don't want to attach the Passport to itself

@@ -20,6 +20,7 @@
             public const string KeyCallerLineNumber = "CallerLineNumber";
 
             public const string KeyError = "Error has occured";
+            public const string KeyOnExit = "On Exit";
         }
 
         public class PassportLevel

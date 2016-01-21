@@ -18,13 +18,13 @@ namespace OCC.Passports.Common.Extensions
             return response;
         }
 
-        public static StandardResponse<T> GenerateStandardError<T>(this T self, string error)
+        public static StandardResponse<T> GenerateStandardError<T>(this T self, string format, params object[] formatParameters)
         {
             var standardError = new StandardError();
 
-            if (!string.IsNullOrWhiteSpace(error))
+            if (!string.IsNullOrWhiteSpace(format))
             {
-                standardError.Errors.Add(error);
+                standardError.Errors.Add(string.Format(format, formatParameters));
             }
 
             var response = new StandardResponse<T>

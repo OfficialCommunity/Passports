@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using OCC.Passports.Common.Contracts.Infrastructure;
@@ -11,110 +12,41 @@ namespace OCC.Passports.Common.Extensions
         public static async Task<T> ScopeAsync<T>(this IHasPassport self, Func<Task<T>> actionAsync)
             where T : StandardResponse
         {
-            try
-            {
-                return await actionAsync();
-            }
-            catch (Exception e)
-            {
-                if (!PassportSettings.Settings.ExcludedExceptions.Any(x => x.Equals(e.GetType().FullName,StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    self.Passport.StampException(e);    
-                }
-
-                var standardError = new StandardError();
-
-                standardError.Errors.Add(Constants.Passports.KeyError);
-                
-                var instance = Activator.CreateInstance<T>();
-                instance.StandardError = standardError;
-
-                return instance;
-            }
-            finally
-            {
-                if (self.Passport != null)
-                {
-                    self.Passport.PopScope();
-                }
-            }
+            return await self.Passport.ScopeAsync(actionAsync);
         }
 
         public static T Scope<T>(this IHasPassport self, Func<T> action)
             where T : StandardResponse
         {
-            try
-            {
-                return action();
-            }
-            catch (Exception e)
-            {
-                if (!PassportSettings.Settings.ExcludedExceptions.Any(x => x.Equals(e.GetType().FullName, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    self.Passport.StampException(e);
-                }
-
-                var standardError = new StandardError();
-
-                standardError.Errors.Add(Constants.Passports.KeyError);
-
-                var instance = Activator.CreateInstance<T>();
-                instance.StandardError = standardError;
-
-                return instance;
-            }
-            finally
-            {
-                if (self.Passport != null)
-                {
-                    self.Passport.PopScope();
-                }
-            }
+            return self.Passport.Scope(action);
         }
 
         public static async Task<T> ScopeAsync<T>(this IPassport self, Func<Task<T>> actionAsync)
             where T : StandardResponse
         {
+            Stopwatch sw = null;
             try
             {
+                sw = Stopwatch.StartNew();
                 return await actionAsync();
             }
             catch (Exception e)
             {
-                if (!PassportSettings.Settings.ExcludedExceptions.Any(x => x.Equals(e.GetType().FullName, StringComparison.InvariantCultureIgnoreCase)))
+                if (sw != null)
                 {
-                    self.StampException(e);
+                    sw.Stop();
                 }
 
-                var standardError = new StandardError();
-
-                standardError.Errors.Add(Constants.Passports.KeyError);
-
-                var instance = Activator.CreateInstance<T>();
-                instance.StandardError = standardError;
-
-                return instance;
-            }
-            finally
-            {
-                if ( self != null)
-                {
-                    self.PopScope();
-                }
-            }
-        }
-
-        public static T Scope<T>(this IPassport self, Func<T> action)
-            where T : StandardResponse
-        {
-            try
-            {
-                return action();
-            }
-            catch (Exception e)
-            {
                 if (!PassportSettings.Settings.ExcludedExceptions.Any(x => x.Equals(e.GetType().FullName, StringComparison.InvariantCultureIgnoreCase)))
                 {
+                    if (sw != null)
+                    {
+                        sw.Stop();
+                        var ElapsedMilliseconds = sw.ElapsedMilliseconds;
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
+                        sw = null;
+                    }
+
                     self.StampException(e);
                 }
 
@@ -131,10 +63,70 @@ namespace OCC.Passports.Common.Extensions
             {
                 if (self != null)
                 {
+                    if (sw != null)
+                    {
+                        sw.Stop();
+                        var ElapsedMilliseconds = sw.ElapsedMilliseconds;
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
+                    }
+
                     self.PopScope();
                 }
             }
         }
 
+        public static T Scope<T>(this IPassport self, Func<T> action)
+            where T : StandardResponse
+        {
+            Stopwatch sw = null;
+            try
+            {
+                sw = Stopwatch.StartNew();
+                return action();
+            }
+            catch (Exception e)
+            {
+                if (sw != null)
+                {
+                    sw.Stop();
+                }
+
+                if (!PassportSettings.Settings.ExcludedExceptions.Any(x => x.Equals(e.GetType().FullName, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    if (sw != null)
+                    {
+                        sw.Stop();
+                        var ElapsedMilliseconds = sw.ElapsedMilliseconds;
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
+                        sw = null;
+                    }
+
+                    self.StampException(e);
+                }
+
+                var standardError = new StandardError();
+
+                standardError.Errors.Add(Constants.Passports.KeyError);
+
+                var instance = Activator.CreateInstance<T>();
+                instance.StandardError = standardError;
+
+                return instance;
+            }
+            finally
+            {
+                if (self != null)
+                {
+                    if (sw != null)
+                    {
+                        sw.Stop();
+                        var ElapsedMilliseconds = sw.ElapsedMilliseconds;
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
+                    }
+
+                    self.PopScope();
+                }
+            }
+        }
     }
 }

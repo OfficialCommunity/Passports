@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A142247F-CC0B-406E-8AD9-35D1E91352BF}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{AAE1F246-F8CA-4082-B53D-E2BC33E221FB}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OCC.Passports.Common.Sample.Console</RootNamespace>
-    <AssemblyName>OCC.Passports.Common.Sample.Console</AssemblyName>
+    <RootNamespace>OCC.Passports.Storage.Console</RootNamespace>
+    <AssemblyName>OCC.Passports.Storage.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,12 +31,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PostSharp, Version=4.2.17.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>..\packages\PostSharp.4.2.17\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,36 +50,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Service.cs" />
-    <Compile Include="ControllerUsingService.cs" />
-    <Compile Include="Controller.cs" />
-    <Compile Include="Contracts\IController.cs" />
-    <Compile Include="Contracts\IService.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="PassportStorageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-    <None Include="Secure.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OCC.Passports.Common\OCC.Passports.Common.csproj">
       <Project>{b8677ff3-2242-4591-a6ca-69d73f599880}</Project>
       <Name>OCC.Passports.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OCC.Passports.Storage.Console\OCC.Passports.Storage.Console.csproj">
-      <Project>{aae1f246-f8ca-4082-b53d-e2bc33e221fb}</Project>
-      <Name>OCC.Passports.Storage.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OCC.Passports.Storage.Logentries\OCC.Passports.Storage.Logentries.csproj">
-      <Project>{5a083a4a-7432-4eb9-9259-d8cc59e06dce}</Project>
-      <Name>OCC.Passports.Storage.Logentries</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OCC.Passports.Storage.Null\OCC.Passports.Storage.Null.csproj">
-      <Project>{eaa28178-a176-4149-93d7-246ab593b664}</Project>
-      <Name>OCC.Passports.Storage.Null</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\PostSharp.4.2.17\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.4.2.17\tools\PostSharp.targets')" />

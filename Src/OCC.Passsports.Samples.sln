@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Storage.Logen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Common.Sample.Console", "OCC.Passports.Common.Sample.Console\OCC.Passports.Common.Sample.Console.csproj", "{A142247F-CC0B-406E-8AD9-35D1E91352BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Storage.Null", "OCC.Passports.Storage.Null\OCC.Passports.Storage.Null.csproj", "{EAA28178-A176-4149-93D7-246AB593B664}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Storage.Console", "OCC.Passports.Storage.Console\OCC.Passports.Storage.Console.csproj", "{AAE1F246-F8CA-4082-B53D-E2BC33E221FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{A142247F-CC0B-406E-8AD9-35D1E91352BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A142247F-CC0B-406E-8AD9-35D1E91352BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A142247F-CC0B-406E-8AD9-35D1E91352BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAA28178-A176-4149-93D7-246AB593B664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA28178-A176-4149-93D7-246AB593B664}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA28178-A176-4149-93D7-246AB593B664}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA28178-A176-4149-93D7-246AB593B664}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAE1F246-F8CA-4082-B53D-E2BC33E221FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAE1F246-F8CA-4082-B53D-E2BC33E221FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAE1F246-F8CA-4082-B53D-E2BC33E221FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAE1F246-F8CA-4082-B53D-E2BC33E221FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
