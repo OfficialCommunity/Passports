@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Destructurama;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Domains;
+using OCC.Passports.Common.Extensions;
 using OCC.Passports.Common.Infrastructure;
 using Serilog;
 using Serilog.Formatting.Json;
@@ -22,6 +24,7 @@ namespace OCC.Passports.Common.Sample.Console
                 .Enrich.FromLogContext()
                 .Destructure.UsingAttributes()
                 .Destructure.JsonNetTypes()
+                //.WriteTo.Loggly()
                 .CreateLogger();
             
             Storage = new Storage.Serilog.PassportStorageService(rootLogger);
@@ -45,7 +48,15 @@ namespace OCC.Passports.Common.Sample.Console
 
         public static async Task<StandardResponse<int>> WithControllerUsingService()
         {
-            var controllerUsingService = new ControllerUsingService(new Passport(Storage), new Service());
+            var passport = new Passport(Storage);
+
+            var sensorInput = new { Latitude = 25, Longitude = 134 };
+            passport.Error("{Now} {@SensorInput} Hello, Serilog!", new object[]
+            {
+                DateTime.UtcNow,
+                sensorInput
+            });
+            var controllerUsingService = new ControllerUsingService(passport, new Service());
 
             return await controllerUsingService.Calculate("2", 10, "/", 0);
         }

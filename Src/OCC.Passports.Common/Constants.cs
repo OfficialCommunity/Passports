@@ -19,7 +19,7 @@
 
             public const string KeyCallContext = "Context";
             public const string KeyHttpRequest = "HttpRequest";
-            public const string KeyScopes=  "Scopes";
+            public const string KeyScopes=  "Scope";
 
             public const string KeyCallerMemberName = "CallerMemberName";
             public const string KeyCallerFilePath = "CallerFilePath";

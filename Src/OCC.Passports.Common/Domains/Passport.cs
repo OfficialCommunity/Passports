@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Contracts.Services;
@@ -132,7 +133,7 @@ namespace OCC.Passports.Common.Domains
                 {
                     foreach (var context in CurrentContexts.Value)
                     {
-                        snapshot[context.Key] = context.Value;
+                        snapshot[context.Key] = JObject.Parse(JsonConvert.SerializeObject(context.Value));
                     }
                 }
             }

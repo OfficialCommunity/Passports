@@ -9,6 +9,8 @@ namespace OCC.Passports.Common.Infrastructure.Contexts
         public object Session { get; set; }
         public Guid Passport { get; set; }
 
+        public string SourceContext { get; set; }
+
         public string MessageTemplate { get; set; }
         public object[] MessageTemplateParameters { get; set; }
 

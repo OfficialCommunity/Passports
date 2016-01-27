@@ -36,6 +36,7 @@ namespace OCC.Passports.Common.Extensions
             {
                 Session = passport.SessionId,
                 Passport = passport.PassportId,
+                SourceContext = passport.Scope != null ? passport.Scope.Name ?? string.Empty : string.Empty,
                 Level = level,
                 MessageTemplate = messageTemplate,
                 MessageTemplateParameters = messageTemplateParameters,

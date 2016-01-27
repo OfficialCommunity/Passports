@@ -72,7 +72,7 @@ namespace OCC.Passports.Storage.Serilog
             {
                 extendedMessageTemplateParameters = new object[1];
             }
-            extendedMessageTemplateParameters[0] = "THIS IS THE CLASS NAME";
+            extendedMessageTemplateParameters[0] = messageContext.SourceContext;
 
             if ( messageContext.Level == PassportLevel.Debug)
             {
