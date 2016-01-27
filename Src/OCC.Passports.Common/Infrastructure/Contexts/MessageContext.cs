@@ -1,7 +1,7 @@
-﻿using OCC.Passports.Common.Domains;
-using System;
+﻿using System;
+using OCC.Passports.Common.Domains;
 
-namespace OCC.Passports.Common.Infrastructure
+namespace OCC.Passports.Common.Infrastructure.Contexts
 {
     [Serializable]
     public class MessageContext

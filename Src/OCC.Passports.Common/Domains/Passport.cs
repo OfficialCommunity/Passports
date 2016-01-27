@@ -3,14 +3,10 @@ using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Extensions;
 using OCC.Passports.Common.Infrastructure;
+using OCC.Passports.Common.Infrastructure.Contexts;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 
 namespace OCC.Passports.Common.Domains
@@ -19,10 +15,10 @@ namespace OCC.Passports.Common.Domains
     {
         protected readonly IPassportStorageService PassportStorageService;
 
-        protected readonly ThreadLocal<KeyValuePair<string, dynamic>[]> CurrentContexts = new ThreadLocal<KeyValuePair<string, dynamic>[]>(() => null);
+        protected readonly ThreadLocal<KeyValuePair<string, IContext>[]> CurrentContexts = new ThreadLocal<KeyValuePair<string, IContext>[]>(() => null);
         protected readonly ThreadLocal<string[]> CurrentScopes = new ThreadLocal<string[]>(() => null);
 
-        protected readonly dynamic Context;
+        protected readonly PassportsContext Contexts = new PassportsContext();
 
         public object SessionId { get; set; }
         public Guid PassportId { get; set; }
@@ -34,28 +30,10 @@ namespace OCC.Passports.Common.Domains
             PassportStorageService = passportStorageService;
             Scopes = new PassportScopeManager();
             Scope = null;
-            Context = BuildImmutableContext();
+            Contexts[Constants.Contexts.Machine] = new MachineContext();
         }
 
-        private static dynamic BuildImmutableContext()
-        {
-            dynamic context = new ExpandoObject();
-
-            try
-            {
-                var now = DateTime.Now;
-                context.UtcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(now).TotalHours;
-                context.Locale = CultureInfo.CurrentCulture.DisplayName;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.WriteLine("Error retrieving time and locale: {0}", ex.Message);
-            }
-
-            return context;
-        }
-
-        protected virtual IEnumerable<KeyValuePair<string, dynamic>> ExtendedContexts()
+        protected virtual IEnumerable<KeyValuePair<string, IContext>> ExtendedContexts()
         {
             return null;
         }
@@ -70,17 +48,23 @@ namespace OCC.Passports.Common.Domains
 
             try
             {
-                var contexts = new List<KeyValuePair<string, dynamic>>();
+                var contexts = new PassportsContext();
                 var scopes = new List<string>();
 
                 if (includeContext)
                 {
-                    contexts.Add(new KeyValuePair<string, dynamic>(Constants.Passports.KeyCallContext, Context));
+                    foreach (var context in Contexts)
+                    {
+                        contexts[context.Key] = context.Value;
+                    }
 
                     var extendedContexts = ExtendedContexts();
                     if (extendedContexts != null)
                     {
-                        contexts.AddRange(extendedContexts);
+                        foreach (var extendedContext in extendedContexts)
+                        {
+                            contexts[extendedContext.Key] = extendedContext.Value;
+                        }
                     }
                 }
 
@@ -100,35 +84,33 @@ namespace OCC.Passports.Common.Domains
             return true.GenerateStandardResponse();
         }
 
-        public StandardResponse<bool> StampException(Exception e)
+        public StandardResponse<bool> StampException(MessageContext messageContext, Exception e)
         {
             if (PassportStorageService == null || e == null)
                 return false.GenerateStandardResponse();
 
             try
             {
-                var contexts = new List<KeyValuePair<string, dynamic>>();
+                var contexts = new PassportsContext();
                 var scopes = new List<string>();
 
-                contexts.Add(new KeyValuePair<string, dynamic>(Constants.Passports.KeyCallContext, Context));
-
+                foreach (var context in Contexts)
+                {
+                    contexts[context.Key] = context.Value;
+                }
+                
                 var extendedContexts = ExtendedContexts();
                 if (extendedContexts != null)
                 {
-                    contexts.AddRange(extendedContexts);
+                    foreach (var extendedContext in extendedContexts)
+                    {
+                        contexts[extendedContext.Key] = extendedContext.Value;
+                    }
                 }
+
+                contexts[Constants.Contexts.Exception] = new ExceptionContext(e);
+
                 scopes.AddRange(Scopes.Serialize());
-
-                var messageContext = new MessageContext();
-
-                if (SessionId != null)
-                    messageContext.Session  = SessionId;
-
-                messageContext.Passport = PassportId;
-
-                messageContext.Level = PassportLevel.Exception;
-
-                contexts.Add(new KeyValuePair<string, dynamic>(Constants.PassportLevel.Exception, BuildException(e)));
 
                 SendInBackground(messageContext, contexts.ToArray(), scopes.ToArray());
             }
@@ -170,7 +152,7 @@ namespace OCC.Passports.Common.Domains
         }
 
         protected void SendInBackground(dynamic messageContext
-                                            , KeyValuePair<string, dynamic>[] contexts
+                                            , KeyValuePair<string, IContext>[] contexts
                                             , string[] scopes)
         {
             ThreadPool.QueueUserWorkItem(c =>
@@ -189,200 +171,6 @@ namespace OCC.Passports.Common.Domains
         public void PopScope()
         {
             Scope = Scopes.Pop();
-        }
-
-        private static dynamic BuildException(Exception exception)
-        {
-            dynamic exceptionContext = new ExpandoObject();
-
-            var exceptionType = exception.GetType();
-
-            exceptionContext.Message = exception.Message;
-            exceptionContext.ClassName = FormatTypeName(exceptionType, true);
-            exceptionContext.StackTrace = BuildStackTrace(exception);
-            exceptionContext.HResult = exception.HResult;
-            exceptionContext.HelpURL = exception.HelpLink;
-
-            var innerExceptions = GetInnerExceptions(exception);
-            if (innerExceptions != null && innerExceptions.Count > 0)
-            {
-                exceptionContext.InnerErrors = new ExpandoObject[innerExceptions.Count];
-                var index = 0;
-                foreach (var e in innerExceptions)
-                {
-                    exceptionContext.InnerErrors[index] = BuildException(e);
-                    index++;
-                }
-            }
-            else if (exception.InnerException != null)
-            {
-                exceptionContext.InnerError = BuildException(exception.InnerException);
-            }
-
-            return exceptionContext;
-        }
-
-        private static IList<Exception> GetInnerExceptions(Exception exception)
-        {
-            var ae = exception as AggregateException;
-            if (ae != null)
-            {
-                return ae.InnerExceptions;
-            }
-
-            var rtle = exception as ReflectionTypeLoadException;
-            if (rtle == null) return null;
-            var index = 0;
-            foreach (var e in rtle.LoaderExceptions)
-            {
-                try
-                {
-                    e.Data["Type"] = rtle.Types[index];
-                }
-                catch (Exception)
-                {
-
-                }
-                index++;
-            }
-
-            return rtle.LoaderExceptions.ToList();
-        }
-
-        protected static string FormatTypeName(Type type, bool fullName)
-        {
-            var name = fullName ? type.FullName : type.Name;
-            if (!type.IsGenericType)
-            {
-                return name;
-            }
-
-            var stringBuilder = new StringBuilder();
-            stringBuilder.Append(name.Substring(0, name.IndexOf("`", StringComparison.Ordinal)));
-            stringBuilder.Append("<");
-            foreach (var t in type.GetGenericArguments())
-            {
-                stringBuilder.Append(FormatTypeName(t, false)).Append(",");
-            }
-            stringBuilder.Remove(stringBuilder.Length - 1, 1);
-            stringBuilder.Append(">");
-
-            return stringBuilder.ToString();
-        }
-
-        private static string[] BuildStackTrace(Exception exception)
-        {
-            var lines = new List<StackTraceLineMessage>();
-
-            var stackTrace = new StackTrace(exception, true);
-            var frames = stackTrace.GetFrames();
-
-            if (frames == null || frames.Length == 0)
-            {
-                var line = new StackTraceLineMessage { FileName = "none", LineNumber = 0 };
-                lines.Add(line);
-                return lines.Select(x => x.ToString()).ToArray();
-            }
-
-            foreach (var frame in frames)
-            {
-                var method = frame.GetMethod();
-
-                if (method == null) continue;
-
-                var lineNumber = frame.GetFileLineNumber();
-
-                if (lineNumber == 0)
-                {
-                    lineNumber = frame.GetILOffset();
-                }
-
-                var methodName = GenerateMethodName(method);
-
-                var file = frame.GetFileName();
-
-                var className = method.ReflectedType != null ? method.ReflectedType.FullName : "(unknown)";
-
-                var line = new StackTraceLineMessage
-                {
-                    FileName = file,
-                    LineNumber = lineNumber,
-                    MethodName = methodName,
-                    ClassName = className
-                };
-
-                lines.Add(line);
-            }
-
-            return lines.Select(x => x.ToString()).ToArray();
-        }
-
-        protected static string GenerateMethodName(MethodBase method)
-        {
-            var stringBuilder = new StringBuilder();
-
-            stringBuilder.Append(method.Name);
-
-            var first = true;
-            if (method is MethodInfo && method.IsGenericMethod)
-            {
-                var genericArguments = method.GetGenericArguments();
-                stringBuilder.Append("[");
-                foreach (var t in genericArguments)
-                {
-                    if (!first)
-                    {
-                        stringBuilder.Append(",");
-                    }
-                    else
-                    {
-                        first = false;
-                    }
-                    stringBuilder.Append(t.Name);
-                }
-                stringBuilder.Append("]");
-            }
-            stringBuilder.Append("(");
-            var parameters = method.GetParameters();
-            first = true;
-            foreach (var t in parameters)
-            {
-                if (!first)
-                {
-                    stringBuilder.Append(", ");
-                }
-                else
-                {
-                    first = false;
-                }
-                var type = "<UnknownType>";
-                type = t.ParameterType.Name;
-                stringBuilder.Append(type + " " + t.Name);
-            }
-            stringBuilder.Append(")");
-
-            return stringBuilder.ToString();
-        }
-
-        public class StackTraceLineMessage
-        {
-            public int LineNumber { get; set; }
-
-            public string ClassName { get; set; }
-
-            public string FileName { get; set; }
-
-            public string MethodName { get; set; }
-
-            public override string ToString()
-            {
-                return string.Format("{0}:{1}:{2}:{3}"
-                    , FileName
-                    , ClassName
-                    , MethodName
-                    , LineNumber
-                    );
-            }
         }
     }
 }

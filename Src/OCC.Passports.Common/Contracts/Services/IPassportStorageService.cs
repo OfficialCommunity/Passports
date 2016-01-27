@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OCC.Passports.Common.Infrastructure;
+using OCC.Passports.Common.Infrastructure.Contexts;
 
 namespace OCC.Passports.Common.Contracts.Services
 {

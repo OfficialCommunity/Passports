@@ -53,11 +53,15 @@
   <ItemGroup>
     <Compile Include="Aspects\LogParametersToPassportAttribute.cs" />
     <Compile Include="Aspects\UsePassportAttribute.cs" />
+    <Compile Include="Contracts\Infrastructure\IContext.cs" />
     <Compile Include="Contracts\Services\IPassportStorageService.cs" />
     <Compile Include="Domains\PassportScope.cs" />
     <Compile Include="Extensions\PostSharpExtensions.cs" />
     <Compile Include="Extensions\PassportScopeExtensions.cs" />
-    <Compile Include="Infrastructure\MessageContext.cs" />
+    <Compile Include="Infrastructure\PassportsContext.cs" />
+    <Compile Include="Infrastructure\Contexts\ExceptionContext.cs" />
+    <Compile Include="Infrastructure\Contexts\MachineContext.cs" />
+    <Compile Include="Infrastructure\Contexts\MessageContext.cs" />
     <Compile Include="Infrastructure\PassportScopeManager.cs" />
     <Compile Include="PassportSettings.cs" />
     <Compile Include="Constants.cs" />

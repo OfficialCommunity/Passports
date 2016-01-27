@@ -42,7 +42,7 @@ namespace OCC.Passports.Common.Sample.Console
                         return result.GenerateStandardError(invalideOperatorMessage);
                 }
                 Passport.Scope.Record(() => result, "Operation succeeded");
-                Passport.Trace("End of request");
+                Passport.Debug("End of request");
                 return result.GenerateStandardResponse();
             });
         }

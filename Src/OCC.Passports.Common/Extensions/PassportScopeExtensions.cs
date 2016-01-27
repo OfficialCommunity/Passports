@@ -47,7 +47,7 @@ namespace OCC.Passports.Common.Extensions
                         sw = null;
                     }
 
-                    self.StampException(e);
+                    self.Exception(e);
                 }
 
                 var standardError = new StandardError();
@@ -101,7 +101,7 @@ namespace OCC.Passports.Common.Extensions
                         sw = null;
                     }
 
-                    self.StampException(e);
+                    self.Exception(e);
                 }
 
                 var standardError = new StandardError();

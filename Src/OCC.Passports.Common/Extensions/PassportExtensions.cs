@@ -1,6 +1,8 @@
-﻿using OCC.Passports.Common.Contracts.Infrastructure;
+﻿using System;
+using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Domains;
 using OCC.Passports.Common.Infrastructure;
+using OCC.Passports.Common.Infrastructure.Contexts;
 
 namespace OCC.Passports.Common.Extensions
 {
@@ -46,7 +48,7 @@ namespace OCC.Passports.Common.Extensions
 
         public static void Debug(this IPassport self
                                     , string messageTemplate
-                                    , object[] messageTemplateData
+                                    , object[] messageTemplateData = null
                                     , string eMail = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
@@ -72,7 +74,7 @@ namespace OCC.Passports.Common.Extensions
 
         public static void Info(this IPassport self
                                     , string messageTemplate
-                                    , object[] messageTemplateData
+                                    , object[] messageTemplateData = null
                                     , string eMail = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
@@ -98,7 +100,7 @@ namespace OCC.Passports.Common.Extensions
 
         public static void Warn(this IPassport self
                                     , string messageTemplate
-                                    , object[] messageTemplateData
+                                    , object[] messageTemplateData = null
                                     , string eMail = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
@@ -124,7 +126,7 @@ namespace OCC.Passports.Common.Extensions
 
         public static void Error(this IPassport self
                                     , string messageTemplate
-                                    , object[] messageTemplateData
+                                    , object[] messageTemplateData = null
                                     , string eMail = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
@@ -146,6 +148,26 @@ namespace OCC.Passports.Common.Extensions
                 );
 
             self.Stamp(messageContext, includeContext, includeScopes);
+        }
+
+        public static void Exception(this IPassport self
+                                    , Exception e
+                                    , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
+                                    , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
+                                    , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
+            )
+        {
+            var messageContext = MessageContext(self
+                , PassportLevel.Exception
+                , null
+                , null
+                , null
+                , memberName
+                , sourceFilePath
+                , sourceLineNumber
+                );
+
+            self.StampException(messageContext, e);
         }
     }
 }

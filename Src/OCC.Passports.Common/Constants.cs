@@ -2,6 +2,12 @@
 {
     public class Constants
     {
+        public class Contexts
+        {
+            public const string Machine = "Machine";
+            public const string Exception = "Exception";
+        }
+
         public class Passports
         {
             public const string KeyPassport = "Passport";
