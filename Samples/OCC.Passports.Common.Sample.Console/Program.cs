@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Domains;
 using OCC.Passports.Common.Infrastructure;
-using OCC.Passports.Storage.Logentries;
 
 namespace OCC.Passports.Common.Sample.Console
 {
@@ -13,7 +11,7 @@ namespace OCC.Passports.Common.Sample.Console
 
         static void Main(string[] args)
         {
-            PassportLevel.Current = PassportLevel.Trace;
+            PassportLevel.Current = PassportLevel.Debug;
 
             var result = WithControllerUsingService().Result;
 

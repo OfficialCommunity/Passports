@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using Newtonsoft.Json.Linq;
 using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Contracts.Services;
@@ -8,9 +5,12 @@ using OCC.Passports.Common.Extensions;
 using OCC.Passports.Common.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading;
 
 namespace OCC.Passports.Common.Domains
@@ -60,7 +60,7 @@ namespace OCC.Passports.Common.Domains
             return null;
         }
 
-        public virtual StandardResponse<bool> Stamp(dynamic messageContext
+        public virtual StandardResponse<bool> Stamp(MessageContext messageContext
                                                     , bool includeContext = false
                                                     , bool includeScopes = false
             )
@@ -119,18 +119,16 @@ namespace OCC.Passports.Common.Domains
                 }
                 scopes.AddRange(Scopes.Serialize());
 
-                dynamic context = new ExpandoObject();
-                var messageContext = context as IDictionary<string, Object>;
+                var messageContext = new MessageContext();
 
                 if (SessionId != null)
-                    messageContext[Constants.Passports.KeySession] = SessionId;
+                    messageContext.Session  = SessionId;
 
-                messageContext[Constants.Passports.KeyPassport] = PassportId;
+                messageContext.Passport = PassportId;
 
-                messageContext[Constants.Passports.KeyTimestamp] = new DateTimeOffset(DateTime.UtcNow);
-                messageContext[Constants.Passports.KeyLevel] = Constants.PassportLevel.Exception;
+                messageContext.Level = PassportLevel.Exception;
 
-                BuildException(context, e);
+                contexts.Add(new KeyValuePair<string, dynamic>(Constants.PassportLevel.Exception, BuildException(e)));
 
                 SendInBackground(messageContext, contexts.ToArray(), scopes.ToArray());
             }
@@ -143,35 +141,32 @@ namespace OCC.Passports.Common.Domains
             return true.GenerateStandardResponse();
         }
 
-        public void Send(dynamic messageContext)
+        public void Send(MessageContext messageContext)
         {
-            var dictionary = messageContext as IDictionary<string, object>;
-            if (dictionary != null)
+            var snapshot = new Dictionary<string, object>();
+            if (CurrentContexts.IsValueCreated)
             {
-                if (CurrentContexts.IsValueCreated)
+                if (CurrentContexts.Value.Any())
                 {
-                    if (CurrentContexts.Value.Any())
+                    foreach (var context in CurrentContexts.Value)
                     {
-                        foreach (var context in CurrentContexts.Value)
-                        {
-                            dictionary[context.Key] = context.Value;
-                        }
-                    }
-                }
-
-                if (CurrentScopes.IsValueCreated)
-                {
-                    if (CurrentScopes.Value.Any())
-                    {
-                        var scopeEntries = new JArray();
-                        scopeEntries = CurrentScopes.Value.Select(JArray.Parse).Aggregate(scopeEntries, (current, entries) => new JArray(current.Union(entries)));
-                        dictionary[Constants.Passports.KeyScopes] = scopeEntries.OrderBy(x => (DateTimeOffset)x[Constants.PassportScope.Entry.Timestamp])
-                                                                                .ToList();
+                        snapshot[context.Key] = context.Value;
                     }
                 }
             }
 
-            PassportStorageService.Store(messageContext);
+            if (CurrentScopes.IsValueCreated)
+            {
+                if (CurrentScopes.Value.Any())
+                {
+                    var scopeEntries = new JArray();
+                    scopeEntries = CurrentScopes.Value.Select(JArray.Parse).Aggregate(scopeEntries, (current, entries) => new JArray(current.Union(entries)));
+                    snapshot[Constants.Passports.KeyScopes] = scopeEntries.OrderBy(x => (DateTimeOffset)x[Constants.PassportScope.Entry.Timestamp])
+                        .ToList();
+                }
+            }
+
+            PassportStorageService.Store(messageContext, snapshot);
         }
 
         protected void SendInBackground(dynamic messageContext
@@ -196,7 +191,7 @@ namespace OCC.Passports.Common.Domains
             Scope = Scopes.Pop();
         }
 
-        private static void BuildException(dynamic context, Exception exception)
+        private static dynamic BuildException(Exception exception)
         {
             dynamic exceptionContext = new ExpandoObject();
 
@@ -215,16 +210,16 @@ namespace OCC.Passports.Common.Domains
                 var index = 0;
                 foreach (var e in innerExceptions)
                 {
-                    exceptionContext.InnerErrors[index] = BuildException(exceptionContext, e);
+                    exceptionContext.InnerErrors[index] = BuildException(e);
                     index++;
                 }
             }
             else if (exception.InnerException != null)
             {
-                exceptionContext.InnerError = BuildException(exceptionContext, exception.InnerException);
+                exceptionContext.InnerError = BuildException(exception.InnerException);
             }
 
-            context.Exception = exceptionContext;
+            return exceptionContext;
         }
 
         private static IList<Exception> GetInnerExceptions(Exception exception)
@@ -244,7 +239,7 @@ namespace OCC.Passports.Common.Domains
                 {
                     e.Data["Type"] = rtle.Types[index];
                 }
-                catch
+                catch (Exception)
                 {
 
                 }
@@ -275,7 +270,7 @@ namespace OCC.Passports.Common.Domains
             return stringBuilder.ToString();
         }
 
-        private static StackTraceLineMessage[] BuildStackTrace(Exception exception)
+        private static string[] BuildStackTrace(Exception exception)
         {
             var lines = new List<StackTraceLineMessage>();
 
@@ -286,7 +281,7 @@ namespace OCC.Passports.Common.Domains
             {
                 var line = new StackTraceLineMessage { FileName = "none", LineNumber = 0 };
                 lines.Add(line);
-                return lines.ToArray();
+                return lines.Select(x => x.ToString()).ToArray();
             }
 
             foreach (var frame in frames)
@@ -319,7 +314,7 @@ namespace OCC.Passports.Common.Domains
                 lines.Add(line);
             }
 
-            return lines.ToArray();
+            return lines.Select(x => x.ToString()).ToArray();
         }
 
         protected static string GenerateMethodName(MethodBase method)
@@ -328,7 +323,7 @@ namespace OCC.Passports.Common.Domains
 
             stringBuilder.Append(method.Name);
 
-            bool first = true;
+            var first = true;
             if (method is MethodInfo && method.IsGenericMethod)
             {
                 var genericArguments = method.GetGenericArguments();
@@ -361,10 +356,7 @@ namespace OCC.Passports.Common.Domains
                     first = false;
                 }
                 var type = "<UnknownType>";
-                if (t.ParameterType != null)
-                {
-                    type = t.ParameterType.Name;
-                }
+                type = t.ParameterType.Name;
                 stringBuilder.Append(type + " " + t.Name);
             }
             stringBuilder.Append(")");
@@ -381,6 +373,16 @@ namespace OCC.Passports.Common.Domains
             public string FileName { get; set; }
 
             public string MethodName { get; set; }
+
+            public override string ToString()
+            {
+                return string.Format("{0}:{1}:{2}:{3}"
+                    , FileName
+                    , ClassName
+                    , MethodName
+                    , LineNumber
+                    );
+            }
         }
     }
 }

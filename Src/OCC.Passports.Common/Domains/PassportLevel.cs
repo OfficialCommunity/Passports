@@ -7,13 +7,11 @@ namespace OCC.Passports.Common.Domains
         private static readonly object CurrentPassportLevelLock = new object();
         private static readonly object CurrentPassportSessionLock = new object();
 
-        public static readonly PassportLevel Trace = new PassportLevel(Constants.PassportLevel.Trace, 0);
-        public static readonly PassportLevel Debug = new PassportLevel(Constants.PassportLevel.Debug, 1);
-        public static readonly PassportLevel Info = new PassportLevel(Constants.PassportLevel.Info, 2);
-        public static readonly PassportLevel Warn = new PassportLevel(Constants.PassportLevel.Warn, 3);
-        public static readonly PassportLevel Error = new PassportLevel(Constants.PassportLevel.Error, 4);
-        public static readonly PassportLevel Fatal = new PassportLevel(Constants.PassportLevel.Fatal, 5);
-        public static readonly PassportLevel Exception = new PassportLevel(Constants.PassportLevel.Exception, 6);
+        public static readonly PassportLevel Debug = new PassportLevel(Constants.PassportLevel.Debug, 0);
+        public static readonly PassportLevel Info = new PassportLevel(Constants.PassportLevel.Info, 1);
+        public static readonly PassportLevel Warn = new PassportLevel(Constants.PassportLevel.Warn, 2);
+        public static readonly PassportLevel Error = new PassportLevel(Constants.PassportLevel.Error, 3);
+        public static readonly PassportLevel Exception = new PassportLevel(Constants.PassportLevel.Exception, 4);
 
         public static PassportLevel _current;
         public static string _currentSession;
@@ -89,7 +87,7 @@ namespace OCC.Passports.Common.Domains
 
         internal static PassportLevel MinLevel
         {
-            get { return Trace; }
+            get { return Debug; }
         }
 
         public static bool operator ==(PassportLevel level1, PassportLevel level2)
@@ -173,18 +171,14 @@ namespace OCC.Passports.Common.Domains
             switch (ordinal)
             {
                 case 0:
-                    return Trace;
-                case 1:
                     return Debug;
-                case 2:
+                case 1:
                     return Info;
-                case 3:
+                case 2:
                     return Warn;
-                case 4:
+                case 3:
                     return Error;
-                case 5:
-                    return Fatal;
-                case 6:
+                case 4:
                     return Exception;
 
                 default:
@@ -197,11 +191,6 @@ namespace OCC.Passports.Common.Domains
             if (levelName == null)
             {
                 return null;
-            }
-
-            if (levelName.Equals(Constants.PassportLevel.Trace, StringComparison.OrdinalIgnoreCase))
-            {
-                return Trace;
             }
 
             if (levelName.Equals(Constants.PassportLevel.Debug, StringComparison.OrdinalIgnoreCase))
@@ -222,11 +211,6 @@ namespace OCC.Passports.Common.Domains
             if (levelName.Equals(Constants.PassportLevel.Error, StringComparison.OrdinalIgnoreCase))
             {
                 return Error;
-            }
-
-            if (levelName.Equals(Constants.PassportLevel.Fatal, StringComparison.OrdinalIgnoreCase))
-            {
-                return Fatal;
             }
 
             if (levelName.Equals(Constants.PassportLevel.Exception, StringComparison.OrdinalIgnoreCase))

@@ -33,9 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PostSharp, Version=4.2.17.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.4.2.17\lib\net35-client\PostSharp.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="PostSharp, Version=4.2.18.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\PostSharp.4.2.18\lib\net35-client\PostSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -65,24 +65,12 @@
       <Project>{b8677ff3-2242-4591-a6ca-69d73f599880}</Project>
       <Name>OCC.Passports.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Src\OCC.Passports.Storage.Console\OCC.Passports.Storage.Console.csproj">
-      <Project>{aae1f246-f8ca-4082-b53d-e2bc33e221fb}</Project>
-      <Name>OCC.Passports.Storage.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Src\OCC.Passports.Storage.Logentries\OCC.Passports.Storage.Logentries.csproj">
-      <Project>{5a083a4a-7432-4eb9-9259-d8cc59e06dce}</Project>
-      <Name>OCC.Passports.Storage.Logentries</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Src\OCC.Passports.Storage.Null\OCC.Passports.Storage.Null.csproj">
-      <Project>{eaa28178-a176-4149-93d7-246ab593b664}</Project>
-      <Name>OCC.Passports.Storage.Null</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\PostSharp.4.2.17\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.4.2.17\tools\PostSharp.targets')" />
+  <Import Project="..\packages\PostSharp.4.2.18\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.4.2.18\tools\PostSharp.targets')" />
   <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
-    <Error Condition="!Exists('..\packages\PostSharp.4.2.17\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
-    <Error Condition="Exists('..\packages\PostSharp.4.2.17\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="!Exists('..\packages\PostSharp.4.2.18\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="Exists('..\packages\PostSharp.4.2.18\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
