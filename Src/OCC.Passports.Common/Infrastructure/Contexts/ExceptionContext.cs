@@ -4,10 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
 using OCC.Passports.Common.Contracts.Infrastructure;
 
 namespace OCC.Passports.Common.Infrastructure.Contexts
 {
+    [Serializable]
     public class ExceptionContext : IContext
     {
         public class StackTraceLineMessage
@@ -60,12 +62,18 @@ namespace OCC.Passports.Common.Infrastructure.Contexts
             }
         }
 
-        public string Message { get; private set; }
+        [JsonProperty(Order = 1)]
         public string ClassName { get; private set; }
-        public int HResult { get; private set; }
-        public string HelpUrl { get; private set; }
+        [JsonProperty(Order = 2)]
+        public string Message { get; private set; }
+        [JsonProperty(Order = 3)]
         public string[] StackTrace { get; private set; }
+        [JsonProperty(Order = 4)]
         public ExceptionContext[] InnerExceptions { get; private set; }
+        [JsonProperty(Order = 5)]
+        public int HResult { get; private set; }
+        [JsonProperty(Order = 6)]
+        public string HelpUrl { get; private set; }
 
         private static string FormatTypeName(Type type, bool fullName)
         {

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Domains;
 using System.Collections.Generic;
 
@@ -8,23 +10,24 @@ namespace OCC.Passports.Common.Infrastructure
     {
         internal readonly object Lock = new object();
 
-        private readonly Dictionary<string,PassportScope> _scopes = new Dictionary<string, PassportScope>();
+        private readonly Dictionary<string, PassportScope> _scopes = new Dictionary<string, PassportScope>();
         private readonly Stack<PassportScope> _workingStack = new Stack<PassportScope>();
 
-        public PassportScope Push(string name)
+        public PassportScope Push(IPassport passport, string name)
         {
-            PassportScope current;
+            PassportScope current = null;
 
             lock (Lock)
             {
-                if (_scopes.ContainsKey(name))
+                if (passport.Scope != null && _scopes.ContainsKey(name + passport.Scope.Id))
                 {
-                    current = _scopes[name];
+                    current = _scopes[name + passport.Scope.Id];
                 }
                 else
                 {
-                    current = new PassportScope(name);
-                    _scopes[name] = current;
+
+                    current = new PassportScope(passport, name);
+                    _scopes[name+current.Id] = current;
                 }
                 _workingStack.Push(current);
             }
@@ -44,7 +47,10 @@ namespace OCC.Passports.Common.Infrastructure
         {
             lock (Lock)
             {
-                return (_scopes.Values.Select(x => x.Serialize()).ToList());
+                return (_scopes.Values.OrderBy(x => x.Timestamp)
+                                        .Select(x => x.Serialize())
+                                        .ToList()
+                );
             }
         }
     }

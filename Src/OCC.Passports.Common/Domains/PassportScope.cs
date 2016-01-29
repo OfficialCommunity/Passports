@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OCC.Passports.Common.Contracts.Infrastructure;
+using OCC.Passports.Common.Extensions;
 
 namespace OCC.Passports.Common.Domains
 {
@@ -12,17 +13,43 @@ namespace OCC.Passports.Common.Domains
     {
         internal readonly object Lock = new object();
 
-        private readonly Dictionary<string, Entry> _members = new Dictionary<string, Entry>();
+        [JsonIgnore] private readonly IPassport _passport;
 
+        [JsonProperty(Order = 3)]
+        public readonly List<IHistory> History = new List<IHistory>();
+
+        [JsonProperty(Order = 1)]
         public string Name { get; private set; }
+        [JsonProperty(Order = 0)]
+        public Guid Id { get; private set; }
+        [JsonProperty(Order = 2)]
+        public DateTimeOffset Timestamp { get; set; }
 
-        public PassportScope(string name)
+        public PassportScope(IPassport passport, string name)
         {
+            _passport = passport;
             Name = name;
+            Timestamp = new DateTimeOffset(DateTime.UtcNow);
+            Id = Guid.NewGuid();
+        }
+        
+        public void RecordParameters<T>(Expression<Func<T>> expression, string operation = null)
+        {
+            var nvp = GetNameAndValue(expression);
+            if (nvp == null)
+                return;
+
+            var name = nvp.Item1;
+            var value = nvp.Item2;
+
+            lock (Lock)
+            {
+                var recording = new RecordingOfParameters(name, value);
+                History.Add(recording);
+            }
         }
 
         public void Record<T>(Expression<Func<T>> expression, string operation = null
-                                , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
                                 , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
                                 , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
                              )
@@ -36,16 +63,14 @@ namespace OCC.Passports.Common.Domains
 
             lock (Lock)
             {
-                var history = new History(Name, name, value, operation, memberName,sourceFilePath,sourceLineNumber);
+                var recording = new Recording(name, value, operation, sourceFilePath, sourceLineNumber);
 
-                if (!_members.ContainsKey(name))
+                History.Add(recording);
+                _passport.Debug("{Name} has changed to {@Value}", new object[]
                 {
-                    _members.Add(name, new Entry(history));
-                }
-                else
-                {
-                    _members[name].AddHistory(history);
-                }
+                    name,
+                    value
+                });
             }
         }
 
@@ -53,11 +78,7 @@ namespace OCC.Passports.Common.Domains
         {
             lock (Lock)
             {
-                var entries = _members.SelectMany(x => x.Value.ValueHistory)
-                                        .OrderBy(x => x.Timestamp)
-                                        .ToList()
-                                        ;
-                return JsonConvert.SerializeObject(entries);
+                return JsonConvert.SerializeObject(this);
             }
         }
 
@@ -87,59 +108,56 @@ namespace OCC.Passports.Common.Domains
         }
 
         [Serializable]
-        public class Entry
+        public class RecordingOfParameters : IHistory
         {
-            public readonly List<History> ValueHistory = new List<History>();
+            [JsonProperty(Order = 1)]
+            public string Name { get; set; }
+            [JsonProperty(Order = 2)]
+            public JToken Value { get; set; }
+            [JsonProperty(Order = 3)]
+            public DateTimeOffset Timestamp { get; set; }
 
-            public Entry(History history)
+            public RecordingOfParameters(string name, object value)
             {
-                AddHistory(history);
-            }
-
-            public void AddHistory(History history)
-            {
-                ValueHistory.Add(history);
+                Timestamp = new DateTimeOffset(DateTime.UtcNow);
+                Name = name;
+                Value = JToken.Parse(JsonConvert.SerializeObject(value, Formatting.None));
             }
         }
 
         [Serializable]
-        public class History 
+        public class Recording : IHistory
         {
-            public string Scope { get; set; }
-            public DateTimeOffset Timestamp { get; set; }
-            public string MemberName { get; set; }
-            public string SourceFilePath { get; set; }
-            public int SourceLineNumber { get; set; }
+            [JsonProperty(Order = 1)]
             public string Name { get; set; }
+            [JsonProperty(Order = 2)]
             public string Operation { get; set; }
+            [JsonProperty(Order = 3)]
             public JToken Value { get; set; }
+            [JsonProperty(Order = 4)]
+            public DateTimeOffset Timestamp { get; set; }
+            //[JsonProperty(Order = 5)]
+            //public string MemberName { get; set; }
+            [JsonProperty(Order = 5)]
+            public string SourceFilePath { get; set; }
+            [JsonProperty(Order = 6)]
+            public int SourceLineNumber { get; set; }
 
-            public History(string scope
-                            , string name
+            public Recording(string name
                             , object value
                             , string operation = null
-                            , string memberName = null
+                            //, string memberName = null
                             , string sourceFilePath = null
                             , int sourcelineNumber = 0
                 )
             {
-                Scope = scope;
                 Timestamp = new DateTimeOffset(DateTime.UtcNow);
-                MemberName = memberName;
+                //MemberName = memberName;
                 SourceFilePath = sourceFilePath;
                 SourceLineNumber = sourcelineNumber;
                 Name = name;
                 Value = JToken.Parse(JsonConvert.SerializeObject(value, Formatting.None));
                 Operation = operation;
-
-                //this[Constants.PassportScope.Entry.Scope] = scope;
-                //this[Constants.PassportScope.Entry.Timestamp] = new DateTimeOffset(DateTime.UtcNow);
-                //if (!string.IsNullOrWhiteSpace(operation))
-                //{
-                //    this[Constants.PassportScope.Entry.Operation] = operation;
-                //}
-                //var serialized = JsonConvert.SerializeObject(value);
-                //this[name] = JToken.Parse(serialized);
             }
         }
     }

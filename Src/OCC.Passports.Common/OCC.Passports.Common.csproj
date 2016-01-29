@@ -54,6 +54,7 @@
     <Compile Include="Aspects\LogParametersToPassportAttribute.cs" />
     <Compile Include="Aspects\UsePassportAttribute.cs" />
     <Compile Include="Contracts\Infrastructure\IContext.cs" />
+    <Compile Include="Contracts\Infrastructure\IHistory.cs" />
     <Compile Include="Contracts\Services\IPassportStorageService.cs" />
     <Compile Include="Domains\PassportScope.cs" />
     <Compile Include="Extensions\PostSharpExtensions.cs" />

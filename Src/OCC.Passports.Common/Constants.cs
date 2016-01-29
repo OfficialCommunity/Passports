@@ -15,11 +15,13 @@
             public const string KeyTimestamp = "Timestamp";
             public const string KeyLevel = "Level";
             public const string KeyMessage = "Message";
-            public const string KeyEMail = "EMail";
+            public const string KeyUser = "User";
 
             public const string KeyCallContext = "Context";
             public const string KeyHttpRequest = "HttpRequest";
-            public const string KeyScopes=  "Scope";
+            public const string KeyScopes =  "Scope";
+            
+            public const string KeyScopesShort = "5";
 
             public const string KeyCallerMemberName = "CallerMemberName";
             public const string KeyCallerFilePath = "CallerFilePath";
@@ -44,11 +46,13 @@
             public const string Parameters = "Parameters";
             public const string Enter = "Entry";
             public const string Exit = "Exit";
+            
             public class Entry
             {
-                public const string Scope = "Scope";
+                public const string Name = "Name";
                 public const string Timestamp = "Timestamp";
                 public const string Operation = "Operation";
+                public const string History = "History";
             }
         }
     }

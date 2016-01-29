@@ -7,6 +7,7 @@ using OCC.Passports.Common.Extensions;
 using OCC.Passports.Common.Infrastructure;
 using Serilog;
 using Serilog.Formatting.Json;
+using Serilog.Sinks.Datadog;
 using Serilog.Sinks.IOFile;
 
 namespace OCC.Passports.Common.Sample.Console
@@ -17,12 +18,17 @@ namespace OCC.Passports.Common.Sample.Console
 
         static void Main(string[] args)
         {
+            var config = new DatadogConfiguration()
+                //.WithWithStatsdServer("127.0.0.1", 8125)
+                .WithHostname("passport")
+                ;
+
             var rootLogger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 //.WriteTo.File("log.txt")
                 //.WriteTo.Sink(new FileSink(@"log.json", new JsonFormatter(false, null, true), null))
-                .Enrich.FromLogContext()
-                .Destructure.UsingAttributes()
+                //.Enrich.FromLogContext()
+                //.Destructure.UsingAttributes()
                 .Destructure.JsonNetTypes()
                 //.WriteTo.Loggly()
                 .CreateLogger();
@@ -50,15 +56,10 @@ namespace OCC.Passports.Common.Sample.Console
         {
             var passport = new Passport(Storage);
 
-            var sensorInput = new { Latitude = 25, Longitude = 134 };
-            passport.Error("{Now} {@SensorInput} Hello, Serilog!", new object[]
-            {
-                DateTime.UtcNow,
-                sensorInput
-            });
             var controllerUsingService = new ControllerUsingService(passport, new Service());
 
-            return await controllerUsingService.Calculate("2", 10, "/", 0);
+            controllerUsingService.Calculate("2", 10, "/", 2);
+            return await controllerUsingService.Calculate("2", 10, "/", 5);
         }
     }
 }

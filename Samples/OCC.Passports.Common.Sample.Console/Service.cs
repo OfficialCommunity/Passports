@@ -16,10 +16,11 @@ namespace OCC.Passports.Common.Sample.Console
             {
                 var result = 0;
 
-                passport.Scope.Record(() => result, "On Entry");
+                passport.Scope.Record(() => result, "First Recording");
                 const string invalideOperatorMessage = "Invalid Operator";
                 await Task.Delay(100);
-                passport.Scope.Record(() => result, "A second time");
+                result = -1;
+                passport.Scope.Record(() => result, "Second Recording");
                 switch (@operator)
                 {
                     case "/":

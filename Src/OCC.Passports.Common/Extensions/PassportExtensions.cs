@@ -1,7 +1,6 @@
 ﻿using System;
 using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Domains;
-using OCC.Passports.Common.Infrastructure;
 using OCC.Passports.Common.Infrastructure.Contexts;
 
 namespace OCC.Passports.Common.Extensions
@@ -26,7 +25,7 @@ namespace OCC.Passports.Common.Extensions
                                                             , PassportLevel level
                                                             , string messageTemplate
                                                             , object[] messageTemplateParameters
-                                                            , string eMail
+                                                            , string user
                                                             , string memberName
                                                             , string sourceFilePath
                                                             , int sourceLineNumber
@@ -40,17 +39,18 @@ namespace OCC.Passports.Common.Extensions
                 Level = level,
                 MessageTemplate = messageTemplate,
                 MessageTemplateParameters = messageTemplateParameters,
-                EMail = eMail,
+                User = user,
                 MemberName = memberName,
                 SourceFilePath = sourceFilePath,
-                SourceLineNumber = sourceLineNumber
+                SourceLineNumber = sourceLineNumber,
+                ScopeId = passport.Scope.Id
             };
         }
 
         public static void Debug(this IPassport self
                                     , string messageTemplate
                                     , object[] messageTemplateData = null
-                                    , string eMail = ""
+                                    , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
@@ -64,7 +64,7 @@ namespace OCC.Passports.Common.Extensions
                 , PassportLevel.Debug
                 , messageTemplate
                 , messageTemplateData
-                , eMail
+                , user
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
@@ -76,7 +76,7 @@ namespace OCC.Passports.Common.Extensions
         public static void Info(this IPassport self
                                     , string messageTemplate
                                     , object[] messageTemplateData = null
-                                    , string eMail = ""
+                                    , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
@@ -90,7 +90,7 @@ namespace OCC.Passports.Common.Extensions
                 , PassportLevel.Info
                 , messageTemplate
                 , messageTemplateData
-                , eMail
+                , user
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
@@ -102,7 +102,7 @@ namespace OCC.Passports.Common.Extensions
         public static void Warn(this IPassport self
                                     , string messageTemplate
                                     , object[] messageTemplateData = null
-                                    , string eMail = ""
+                                    , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
@@ -116,7 +116,7 @@ namespace OCC.Passports.Common.Extensions
                 , PassportLevel.Warn
                 , messageTemplate
                 , messageTemplateData
-                , eMail
+                , user
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
@@ -128,7 +128,7 @@ namespace OCC.Passports.Common.Extensions
         public static void Error(this IPassport self
                                     , string messageTemplate
                                     , object[] messageTemplateData = null
-                                    , string eMail = ""
+                                    , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
@@ -142,7 +142,7 @@ namespace OCC.Passports.Common.Extensions
                 , PassportLevel.Error
                 , messageTemplate
                 , messageTemplateData
-                , eMail
+                , user
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
@@ -153,6 +153,7 @@ namespace OCC.Passports.Common.Extensions
 
         public static void Exception(this IPassport self
                                     , Exception e
+                                    , string user = ""
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
                                     , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
                                     , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0

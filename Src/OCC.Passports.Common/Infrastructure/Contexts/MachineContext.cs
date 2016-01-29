@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Globalization;
+using Newtonsoft.Json;
 using OCC.Passports.Common.Contracts.Infrastructure;
 
 namespace OCC.Passports.Common.Infrastructure.Contexts
 {
+    [Serializable]
     public class MachineContext : IContext
     {
         public MachineContext()
@@ -22,8 +24,11 @@ namespace OCC.Passports.Common.Infrastructure.Contexts
             
         }
 
+        [JsonProperty(Order = 1)]
         public string MachineName { get; private set; }
-        public double UtcOffset { get; private set; }
+        [JsonProperty(Order = 2)]
         public string Locale { get; private set; }
+        [JsonProperty(Order = 3)]
+        public double UtcOffset { get; private set; }
     }
 }

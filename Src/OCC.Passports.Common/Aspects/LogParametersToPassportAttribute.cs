@@ -90,7 +90,9 @@ namespace OCC.Passports.Common.Aspects
                 }
 
             }
-            thisPassport.Scope.Record(() => parameters, Constants.PassportScope.Enter);
+            thisPassport.Scope.RecordParameters(() => parameters, Constants.PassportScope.Enter);
+            thisPassport.Debug("Has been entered", includeContext: true, includeScopes: true);
+
         }
     }
 }

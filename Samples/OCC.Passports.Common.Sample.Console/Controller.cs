@@ -38,6 +38,7 @@ namespace OCC.Passports.Common.Sample.Console
                         break;
                     default:
                         Passport.Scope.Record(() => result, "Operation failed");
+
                         Passport.Error(invalideOperatorMessage);
                         return result.GenerateStandardError(invalideOperatorMessage);
                 }

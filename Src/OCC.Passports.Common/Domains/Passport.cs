@@ -142,8 +142,7 @@ namespace OCC.Passports.Common.Domains
             {
                 if (CurrentScopes.Value.Any())
                 {
-                    var scopeEntries = new JArray();
-                    scopeEntries = CurrentScopes.Value.Select(JArray.Parse).Aggregate(scopeEntries, (current, entries) => new JArray(current.Union(entries)));
+                    var scopeEntries = new JArray(CurrentScopes.Value.Select(JObject.Parse).ToList());
                     snapshot[Constants.Passports.KeyScopes] = scopeEntries.OrderBy(x => (DateTimeOffset)x[Constants.PassportScope.Entry.Timestamp])
                         .ToList();
                 }
@@ -166,7 +165,7 @@ namespace OCC.Passports.Common.Domains
 
         public void PushScope(string name)
         {
-            Scope = Scopes.Push(name);
+            Scope = Scopes.Push(this, name);
         }
 
         public void PopScope()
