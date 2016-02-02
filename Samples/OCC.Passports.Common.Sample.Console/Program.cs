@@ -1,27 +1,26 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Runtime.Remoting.Messaging;
 using Destructurama;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Domains;
 using OCC.Passports.Common.Extensions;
 using OCC.Passports.Common.Infrastructure;
+using OCC.Passports.Storage.Serilog.Sinks.Passport;
 using Serilog;
-using Serilog.Formatting.Json;
 using Serilog.Sinks.Datadog;
-using Serilog.Sinks.IOFile;
+using System.Threading.Tasks;
 
 namespace OCC.Passports.Common.Sample.Console
 {
     class Program
     {
-        private static IPassportStorageService Storage = null;
+        private static IPassportStorageService _storage = null;
 
         static void Main(string[] args)
         {
-            var config = new DatadogConfiguration()
-                //.WithWithStatsdServer("127.0.0.1", 8125)
-                .WithHostname("passport")
-                ;
+            //var config = new DatadogConfiguration()
+            //    //.WithWithStatsdServer("127.0.0.1", 8125)
+            //    .WithHostname("passport")
+            //    ;
 
             var rootLogger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
@@ -33,33 +32,50 @@ namespace OCC.Passports.Common.Sample.Console
                 //.WriteTo.Loggly()
                 .CreateLogger();
             
-            Storage = new Storage.Serilog.PassportStorageService(rootLogger);
+            var passportLogger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Sink(new PassportSink(rootLogger))
+                .Destructure.JsonNetTypes()
+                .CreateLogger();
+
+            _storage = new Storage.Serilog.PassportStorageService(passportLogger);
 
             PassportLevel.Current = PassportLevel.Debug;
 
-            var result = WithControllerUsingService().Result;
+            //var result = WithControllerUsingService().Result;
+            var result = WithControllerAsyncTest().Result;
 
             System.Console.WriteLine("press any key to continue");
             System.Console.ReadKey();
 
-            Storage.Flush();
+            _storage.Flush();
         }
 
         public static async Task<StandardResponse<int>> WithController()
         {
-            var controller = new Controller(new Passport(Storage));
+            var controller = new Controller(new Passport(_storage));
             return await controller.Calculate("1", 10, "/", 0);
 
         }
 
         public static async Task<StandardResponse<int>> WithControllerUsingService()
         {
-            var passport = new Passport(Storage);
+            var passport = new Passport(_storage);
 
             var controllerUsingService = new ControllerUsingService(passport, new Service());
 
-            controllerUsingService.Calculate("2", 10, "/", 2);
+            //controllerUsingService.Calculate("2", 10, "/", 2);
             return await controllerUsingService.Calculate("2", 10, "/", 5);
+        }
+
+        public static async Task<StandardResponse<bool>> WithControllerAsyncTest()
+        {
+            var passport = new Passport(_storage);
+
+            var controller = new Controller(new Passport(_storage));
+
+            await controller.AdditionTest("123");
+            return true.GenerateStandardResponse();
         }
     }
 }

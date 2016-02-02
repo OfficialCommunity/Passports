@@ -67,10 +67,11 @@ namespace OCC.Passports.Common.Extensions
                     {
                         sw.Stop();
                         var ElapsedMilliseconds = sw.ElapsedMilliseconds;
-                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit, debug: false);
                     }
 
-                    self.PopScope();
+                    self.Debug(Constants.Passports.KeyEndOfRequest, includeContext: true, includeScopes: true);
+                    //self.PopScope();
                 }
             }
         }
@@ -124,7 +125,7 @@ namespace OCC.Passports.Common.Extensions
                         self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
                     }
 
-                    self.PopScope();
+                    //self.PopScope();
                 }
             }
         }

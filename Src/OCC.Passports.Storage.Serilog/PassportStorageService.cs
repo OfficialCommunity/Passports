@@ -1,14 +1,12 @@
-﻿using System.Linq;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using OCC.Passports.Common.Contracts.Services;
-using System;
-using System.Collections.Generic;
 using OCC.Passports.Common.Domains;
 using OCC.Passports.Common.Infrastructure.Contexts;
 using OCC.Passports.Storage.Serilog.Extensions;
 using Serilog;
-using Serilog.Core;
-using Serilog.Events;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Constants = OCC.Passports.Common.Constants;
 
 namespace OCC.Passports.Storage.Serilog
@@ -24,10 +22,8 @@ namespace OCC.Passports.Storage.Serilog
 
         public void Store(MessageContext messageContext, IDictionary<string, object> snapshot)
         {
-            var currentContext = _logger.With("E_1_SourceContext", messageContext.SourceContext)
-                                        .With("E_7_" + Constants.Passports.KeyCallerMemberName, messageContext.MemberName)
-                                        .With("E_8_" + Constants.Passports.KeyCallerFilePath, messageContext.SourceFilePath)
-                                        .With("E_9_" + Constants.Passports.KeyCallerLineNumber, messageContext.SourceLineNumber)
+            var currentContext = _logger.With(Constants.KeyPassportTimestamp, messageContext.Timestamp)
+                                        .With("E_1_SourceContext", messageContext.SourceContext)
                                         .With("E_3_" + Constants.Passports.KeyPassport, messageContext.Passport)
                                         .With("CurrentScope", messageContext.ScopeId)
              ;
@@ -48,19 +44,7 @@ namespace OCC.Passports.Storage.Serilog
                 foreach (var key in snapshot.Keys.Where(x => x != Constants.Passports.KeyScopes))
                 {
                     var value = snapshot[key];
-                    //if (value is ExpandoObject)
-                    //{
-                    //    dynamic dynamicValue = value;
-                    //    currentContext = currentContext.ForContext(key, JsonConvert.DeserializeObject<dynamic>(JsonConvert.SerializeObject(dynamicValue)));
-                    //}
-                    //else if (value is JToken)
-                    //{
-                        
-                    //}
-                    //else
-                    //{
                     currentContext = currentContext.With("E_6_" + key, value);
-                    //}
                 }
 
                 if (snapshot.ContainsKey(Constants.Passports.KeyScopes))
@@ -110,10 +94,9 @@ namespace OCC.Passports.Storage.Serilog
                 extendedMessageTemplateParameters = new object[1];
             }
             extendedMessageTemplateParameters[0] = messageContext.SourceContext;
-   
+
             if ( messageContext.Level == PassportLevel.Debug)
             {
-                //currentContext.Write(new LogEvent(messageContext.Timestamp,LogEventLevel.Debug, null, extendedMessageTemplate, 
                 currentContext.Debug(extendedMessageTemplate, extendedMessageTemplateParameters);
             }
             else if (messageContext.Level == PassportLevel.Info)
@@ -138,5 +121,48 @@ namespace OCC.Passports.Storage.Serilog
         {
             //throw new NotImplementedException();
         }
+
+        //public LogEvent LogEvent(MessageContext messageContext, Exception exception = null)
+        //{
+        //    if (messageContext.MessageTemplate == null) return null;
+            
+        //    // Catch a common pitfall when a single non-object array is cast to object[]
+        //    if (messageContext.MessageTemplateParameters != null &&
+        //        messageContext.MessageTemplateParameters.GetType() != typeof(object[]))
+        //        messageContext.MessageTemplateParameters = new object[] { messageContext.MessageTemplateParameters };
+
+        //    var now = DateTimeOffset.Now;
+
+        //    MessageTemplate parsedTemplate;
+        //    IEnumerable<LogEventProperty> properties;
+
+        //    _messageTemplateProcessor.Process(messageContext.MessageTemplate, messageContext.MessageTemplateParameters, out parsedTemplate, out properties);
+
+        //    var logLevel = LogEventLevel.Information; 
+        //    if (messageContext.Level == PassportLevel.Debug)
+        //    {
+        //        logLevel = LogEventLevel.Debug;
+        //    }
+        //    else if (messageContext.Level == PassportLevel.Info)
+        //    {
+        //        logLevel = LogEventLevel.Information;
+        //    }
+        //    else if (messageContext.Level == PassportLevel.Warn)
+        //    {
+        //        logLevel = LogEventLevel.Warning;
+        //    }
+        //    else if (messageContext.Level == PassportLevel.Error)
+        //    {
+        //        logLevel = LogEventLevel.Error;
+        //    }
+        //    else if (messageContext.Level == PassportLevel.Exception)
+        //    {
+        //        logLevel = LogEventLevel.Error;
+        //    }
+
+        //    var logEvent = new LogEvent(now, logLevel, exception, parsedTemplate, properties);
+
+        //    return logEvent;
+        //}
     }
 }

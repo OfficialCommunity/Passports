@@ -24,13 +24,20 @@ namespace OCC.Passports.Common.Domains
         public object SessionId { get; set; }
         public Guid PassportId { get; set; }
         public PassportScopeManager Scopes { get; set; }
-        public PassportScope Scope { get; set; }
+        public PassportScope Scope {
+            get
+            {
+                var scope = Scopes.Current();
+                if ( scope == null )
+                    throw new NullReferenceException("scope");
+                return Scopes.Current();
+            } 
+        }
 
         public Passport(IPassportStorageService passportStorageService)
         {
             PassportStorageService = passportStorageService;
             Scopes = new PassportScopeManager();
-            Scope = null;
             Contexts[Constants.Contexts.Machine] = new MachineContext();
         }
 
@@ -151,7 +158,7 @@ namespace OCC.Passports.Common.Domains
             PassportStorageService.Store(messageContext, snapshot);
         }
 
-        protected void SendInBackground(dynamic messageContext
+        protected void SendInBackground(MessageContext messageContext
                                             , KeyValuePair<string, IContext>[] contexts
                                             , string[] scopes)
         {
@@ -165,12 +172,7 @@ namespace OCC.Passports.Common.Domains
 
         public void PushScope(string name)
         {
-            Scope = Scopes.Push(this, name);
-        }
-
-        public void PopScope()
-        {
-            Scope = Scopes.Pop();
+            Scopes.Push(this, name);
         }
     }
 }

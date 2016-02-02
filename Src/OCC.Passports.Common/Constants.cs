@@ -2,6 +2,8 @@
 {
     public class Constants
     {
+        public const string KeyPassportTimestamp = "PassportTimestamp";
+
         public class Contexts
         {
             public const string Machine = "Machine";
@@ -29,6 +31,11 @@
 
             public const string KeyError = "Error has occured";
             public const string KeyOnExit = "On Exit";
+
+            public const string KeyCurrentCallContext = "CurrentCallContext";
+            public const string KeyParentCallContext = "ParentCallContext";
+
+            public const string KeyEndOfRequest = "End of request ";
         }
 
         public class PassportLevel

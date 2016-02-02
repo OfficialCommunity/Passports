@@ -13,6 +13,6 @@ namespace OCC.Passports.Common.Contracts.Infrastructure
         StandardResponse<bool> Stamp(MessageContext messageContext, bool includeCallContext, bool includeSnapshot);
         StandardResponse<bool> StampException(MessageContext messageContext, Exception e);
         void PushScope(string name);
-        void PopScope();
+        //void PopScope();
     }
 }

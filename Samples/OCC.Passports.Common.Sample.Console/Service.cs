@@ -41,7 +41,6 @@ namespace OCC.Passports.Common.Sample.Console
                         return result.GenerateStandardError(invalideOperatorMessage);
                 }
                 passport.Scope.Record(() => result, "Operation succeeded");
-                passport.Debug("End of request", includeContext: true, includeScopes: true );
                 return result.GenerateStandardResponse();
             });
         }

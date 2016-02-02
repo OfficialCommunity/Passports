@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Extensions;
 using PostSharp.Aspects;
@@ -33,10 +34,21 @@ namespace OCC.Passports.Common.Aspects
             _parameterNames = method.GetParameters().Select(p => p.Name).ToArray();
             if (_sessionParameter == null) return;
 
-            _sessionParameterIndex = Array.IndexOf(_parameterNames, _sessionParameter);
-            if (_sessionParameterIndex == -1)
+            try
             {
-                throw new ArgumentOutOfRangeException(_sessionParameter);
+                _sessionParameterIndex = Array.IndexOf(_parameterNames, _sessionParameter);
+                if (_sessionParameterIndex == -1)
+                {
+                    throw new ArgumentOutOfRangeException(_sessionParameter);
+                }
+            }
+            catch (ArgumentOutOfRangeException outOfRangeException)
+            {
+                throw new Exception(string.Format("Indext of {0} not in [{1}]", _sessionParameter, string.Join("|", _parameterNames)));                
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
