@@ -171,5 +171,31 @@ namespace OCC.Passports.Common.Extensions
 
             self.StampException(messageContext, e);
         }
+
+        public static void RecordHistory(this IPassport self
+                                    , string messageTemplate
+                                    , object[] messageTemplateData = null
+                                    , string user = ""
+                                    , bool includeContext = false
+                                    , bool includeScopes = false
+                                    , string memberName = ""
+                                    , string sourceFilePath = ""
+                                    , int sourceLineNumber = 0
+            )
+        {
+            if (PassportLevel.Debug < PassportLevel.Current) return;
+
+            var messageContext = MessageContext(self
+                , PassportLevel.Debug
+                , messageTemplate
+                , messageTemplateData
+                , user
+                , memberName
+                , sourceFilePath
+                , sourceLineNumber
+                );
+
+            self.Stamp(messageContext, includeContext, includeScopes);
+        }
     }
 }

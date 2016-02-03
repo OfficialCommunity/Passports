@@ -63,7 +63,8 @@ namespace OCC.Passports.Common.Domains
         }
 
         public void Record<T>(Expression<Func<T>> expression, string operation = null
-                                , bool debug = true
+                                , bool record = false
+                                , string user = ""
                                 , [System.Runtime.CompilerServices.CallerMemberNameAttribute] string memberName = ""
                                 , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
                                 , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
@@ -82,12 +83,17 @@ namespace OCC.Passports.Common.Domains
 
                 History.Add(recording);
 
-                if (debug)
-                    _passport.Debug("{Name} has changed to {@Value}", new object[]
+                if (record)
+                    _passport.RecordHistory("{Name} has changed to {@Value}", new object[]
                     {
                         name,
                         value
-                    });
+                    },
+                    user: user,
+                    memberName: memberName,
+                    sourceFilePath:sourceFilePath,
+                    sourceLineNumber: sourceLineNumber
+                    );
             }
         }
 
