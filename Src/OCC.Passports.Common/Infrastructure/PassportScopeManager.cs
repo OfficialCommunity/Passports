@@ -36,7 +36,6 @@ namespace OCC.Passports.Common.Infrastructure
             var key = currentId.ToString("N");
             CallContext.LogicalSetData(Constants.Passports.KeyCurrentCallContext, key);
 
-            Console.WriteLine("push {0}:{1}", currentId, parent);
             var current = new PassportScope(passport, name, currentId, parent);
             lock (Lock)
             {

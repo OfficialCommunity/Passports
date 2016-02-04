@@ -23,28 +23,42 @@ namespace OCC.Passports.Storage.Serilog
         public void Store(MessageContext messageContext, IDictionary<string, object> snapshot)
         {
             var currentContext = _logger.With(Constants.KeyPassportTimestamp, messageContext.Timestamp)
-                                        .With("E_1_SourceContext", messageContext.SourceContext)
+                                        .With("E_0_" + Constants.Passports.KeyMember, messageContext.Member)                        
+                                        .With("E_1_" + Constants.Passports.KeyCurrentCallContext, messageContext.CallContext)
                                         .With("E_3_" + Constants.Passports.KeyPassport, messageContext.Passport)
-                                        .With("CurrentScope", messageContext.ScopeId)
+                                        
              ;
+
+            if (!string.IsNullOrWhiteSpace(messageContext.ParentContext))
+            {
+                currentContext = currentContext.With("E_2_" + Constants.Passports.KeyParentCallContext,messageContext.ParentContext);
+            }
+
+            if (messageContext.LogCaller)
+            {
+                currentContext = currentContext.With("Z_1_"+Constants.Passports.KeyCallerFilePath, messageContext.SourceFilePath)
+                    .With("Z_2_"+Constants.Passports.KeyCallerLineNumber, messageContext.SourceLineNumber)
+                    ;
+            }
 
             if (messageContext.Session != null)
             {
-                currentContext = currentContext.With("E_2_" + Constants.Passports.KeySession, messageContext.Session);
+                currentContext = currentContext.With("E_4_" + Constants.Passports.KeySession, messageContext.Session);
             }
 
             if (!string.IsNullOrWhiteSpace(messageContext.User))
             {
-                currentContext = currentContext.With("E_4_" + Constants.Passports.KeyUser, messageContext.User);
+                currentContext = currentContext.With("E_5_" + Constants.Passports.KeyUser, messageContext.User);
             }
 
             if (snapshot != null
                 && snapshot.Keys.Any())
             {
+                var contextCount = 0;
                 foreach (var key in snapshot.Keys.Where(x => x != Constants.Passports.KeyScopes))
                 {
                     var value = snapshot[key];
-                    currentContext = currentContext.With("E_6_" + key, value);
+                    currentContext = currentContext.With(string.Format("C_{0}_{1}",contextCount++, key), value);
                 }
 
                 if (snapshot.ContainsKey(Constants.Passports.KeyScopes))
@@ -52,26 +66,27 @@ namespace OCC.Passports.Storage.Serilog
                     try
                     {
                         var entries = (IList<JToken>) snapshot[Constants.Passports.KeyScopes];
-                        if (entries != null)
+                        if (entries != null && entries.Any())
                         {
-                            var entryCounter = 0;
-
-                            foreach (var entry in entries)
+                            if (messageContext.ScopeDepth == 0)
                             {
-                                var entryKey = string.Format("E_{0}_{1}", Constants.Passports.KeyScopesShort, entryCounter++);
-                                currentContext = currentContext.With(entryKey, new {
-                                    Name = (string)entry[Constants.PassportScope.Entry.Name],
-                                    Timestamp = (DateTimeOffset)entry[Constants.PassportScope.Entry.Timestamp]
-                                });
-
-                                var historyCounter = 0;
-                                var history = entry[Constants.PassportScope.Entry.History].Children();
-                                foreach (var record in history)
+                                var lastEntry = entries.LastOrDefault();
+                                if (lastEntry != null)
                                 {
-                                    var recordName = (string) record[Constants.PassportScope.Entry.Name];
-                                    var recordKey = string.Format("{0}_{1}_{2}", entryKey, historyCounter++, recordName);
-                                    currentContext = currentContext.With(recordKey, record);
+                                    currentContext = BuildScopeEntry(currentContext, lastEntry, 0);
                                 }
+                            }
+                            else
+                            {
+                                var calculatedDepth = messageContext.ScopeDepth == -1
+                                    ? int.MaxValue
+                                    : messageContext.ScopeDepth;
+
+                                var entryCounter = 0;
+
+                                currentContext = entries.Reverse()
+                                                        .Where(entry => entryCounter < calculatedDepth)
+                                                        .Aggregate(currentContext, (current, entry) => BuildScopeEntry(current, entry, entryCounter++));
                             }
                         }
                     }
@@ -82,7 +97,7 @@ namespace OCC.Passports.Storage.Serilog
                 }
             }
 
-            var extendedMessageTemplate = "{E_1_SourceContext} " + messageContext.MessageTemplate;
+            var extendedMessageTemplate = "{" + "E_0_" + Constants.Passports.KeyMember  +"} " + messageContext.MessageTemplate;
             object[] extendedMessageTemplateParameters = null;
             if (messageContext.MessageTemplateParameters != null)
             {
@@ -93,7 +108,7 @@ namespace OCC.Passports.Storage.Serilog
             {
                 extendedMessageTemplateParameters = new object[1];
             }
-            extendedMessageTemplateParameters[0] = messageContext.SourceContext;
+            extendedMessageTemplateParameters[0] = messageContext.Member;
 
             if ( messageContext.Level == PassportLevel.Debug)
             {
@@ -120,6 +135,28 @@ namespace OCC.Passports.Storage.Serilog
         public void Flush()
         {
             //throw new NotImplementedException();
+        }
+
+        private ILogger BuildScopeEntry(ILogger currentContext, JToken entry, int position)
+        {
+            var entryKey = string.Format("E_{0}_{1}", Constants.Passports.KeyScopesShort, position);
+            currentContext = currentContext.With(entryKey, new
+            {
+                Name = (string)entry[Constants.PassportScope.Entry.Name],
+                Timestamp = (DateTimeOffset)entry[Constants.PassportScope.Entry.Timestamp]
+            });
+
+            var historyCounter = 0;
+            var history = entry[Constants.PassportScope.Entry.History].Children();
+            foreach (var record in history)
+            {
+                var recordName = (string)record[Constants.PassportScope.Entry.Name];
+                var recordKey = string.Format("{0}_{1}_{2}", entryKey, historyCounter++,
+                    recordName);
+                currentContext = currentContext.With(recordKey, record);
+            }
+
+            return currentContext;
         }
 
         //public LogEvent LogEvent(MessageContext messageContext, Exception exception = null)

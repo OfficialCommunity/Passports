@@ -91,7 +91,7 @@ namespace OCC.Passports.Common.Aspects
 
             }
             thisPassport.Scope.RecordParameters(() => parameters, Constants.PassportScope.Enter);
-            thisPassport.Debug("Has been entered", includeContext: true, includeScopes: true);
+            thisPassport.Debug("Has been entered", includeContext: true, includeScopes: true, scopeDepth: 0);
 
         }
     }

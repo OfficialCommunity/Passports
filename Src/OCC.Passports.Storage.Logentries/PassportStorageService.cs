@@ -7,12 +7,23 @@ namespace OCC.Passports.Storage.Logentries
 {
     public class PassportStorageService : IPassportStorageService
     {
-        public void Store(dynamic context)
+        public void Flush()
+        {
+            var numWaits = 3;
+            while (!LogentriesCore.Net.AsyncLogger.AreAllQueuesEmpty(TimeSpan.FromSeconds(5)) && numWaits > 0)
+                numWaits--;
+            
+        }
+
+        public void Store(Common.Infrastructure.Contexts.MessageContext messageContext, System.Collections.Generic.IDictionary<string, object> snapshot)
         {
             string message = null;
             try
             {
-                message = JsonConvert.SerializeObject(context);
+                message = JsonConvert.SerializeObject(new
+                {
+                    
+                });
             }
             catch (Exception ex)
             {
@@ -23,7 +34,7 @@ namespace OCC.Passports.Storage.Logentries
                     throw;
                 }
             }
-            
+
             if (message == null) return;
             try
             {
@@ -38,14 +49,6 @@ namespace OCC.Passports.Storage.Logentries
                     throw;
                 }
             }
-        }
-
-        public void Flush()
-        {
-            var numWaits = 3;
-            while (!LogentriesCore.Net.AsyncLogger.AreAllQueuesEmpty(TimeSpan.FromSeconds(5)) && numWaits > 0)
-                numWaits--;
-            
         }
     }
 }

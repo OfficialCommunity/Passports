@@ -60,7 +60,8 @@ namespace OCC.Passports.Common.Sample.Console
                 var ids = new[]
                 {
                     1, 
-                    //2, 3, 4, 5
+                    2, 
+                    //3, 4, 5
                 };
 
                 await Task.WhenAll(ids.Select(x => Add1Then100(Passport,x)));
@@ -99,7 +100,7 @@ namespace OCC.Passports.Common.Sample.Console
             {
                 var result = value + increment;
 
-                Passport.Scope.Record(() => result, "Added");
+                Passport.Scope.Record(() => result, "Added", record: true);
 
                 await Task.Delay(1000);
 

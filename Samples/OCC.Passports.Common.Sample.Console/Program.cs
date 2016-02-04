@@ -1,4 +1,5 @@
-﻿using System.Runtime.Remoting.Messaging;
+﻿using System;
+using System.Runtime.Remoting.Messaging;
 using Destructurama;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Domains;
@@ -72,9 +73,9 @@ namespace OCC.Passports.Common.Sample.Console
         {
             var passport = new Passport(_storage);
 
-            var controller = new Controller(new Passport(_storage));
+            var controller = new Controller(passport);
 
-            await controller.AdditionTest("123");
+            await controller.AdditionTest(Guid.NewGuid().ToString("N"));
             return true.GenerateStandardResponse();
         }
     }

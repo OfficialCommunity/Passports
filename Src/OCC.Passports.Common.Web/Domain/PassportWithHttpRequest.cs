@@ -1,6 +1,7 @@
 ﻿using System.Dynamic;
 using Newtonsoft.Json.Linq;
 using OCC.Passports.Common.Contracts;
+using OCC.Passports.Common.Contracts.Infrastructure;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Domains;
 using System;
@@ -43,11 +44,11 @@ namespace OCC.Passports.Common.Web.Domain
 
             _extendedContexts = new []
             {
-                new KeyValuePair<string, dynamic>(Constants.Passports.KeyHttpRequest, _httpRequestContext)
+                new KeyValuePair<string, IContext>(Constants.Passports.KeyHttpRequest, _httpRequestContext)
             };
         }
 
-        protected override IEnumerable<KeyValuePair<string, dynamic>> ExtendedContexts()
+        protected override IEnumerable<KeyValuePair<string, IContext>> ExtendedContexts()
         {
             return _extendedContexts;
         }

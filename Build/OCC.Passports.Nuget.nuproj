@@ -17,9 +17,6 @@
     <Compile Include="OCC.Passports.Common.nuspec">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="OCC.Passports.Common.Web.nuspec">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="OCC.Passports.Storage.Logentries.nuspec">
       <SubType>Code</SubType>
     </Compile>

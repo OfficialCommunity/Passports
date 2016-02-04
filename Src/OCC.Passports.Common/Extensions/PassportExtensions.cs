@@ -29,13 +29,19 @@ namespace OCC.Passports.Common.Extensions
                                                             , string memberName
                                                             , string sourceFilePath
                                                             , int sourceLineNumber
+                                                            , bool logCaller = false
+                                                            , int scopeDepth = -1
                                                             )
         {
-            return new MessageContext
+            var scope = passport.Scope;
+
+            var messageContext = new MessageContext
             {
                 Session = passport.SessionId,
                 Passport = passport.PassportId,
-                SourceContext = passport.Scope != null ? passport.Scope.Name ?? string.Empty : string.Empty,
+                Member = scope != null ? scope.Name ?? string.Empty : string.Empty,
+                CallContext = scope != null ? scope.Id.ToString() : string.Empty,
+                ParentContext = scope != null ? (scope.Parent != null ? scope.Parent.Id.ToString() : string.Empty) : string.Empty,
                 Level = level,
                 MessageTemplate = messageTemplate,
                 MessageTemplateParameters = messageTemplateParameters,
@@ -43,8 +49,18 @@ namespace OCC.Passports.Common.Extensions
                 MemberName = memberName,
                 SourceFilePath = sourceFilePath,
                 SourceLineNumber = sourceLineNumber,
-                ScopeId = passport.Scope.Id
+                LogCaller = logCaller,
+                ScopeDepth = scopeDepth
             };
+
+            Console.WriteLine("{0} {1}"
+                                    , messageContext.Timestamp.ToString("HH:mm:ss.FFFFFFF")
+                                    , messageContext.Id
+                                    //, messageContext.Session
+                                    //, messageContext.Passport
+                                    //, messageContext.MessageTemplate
+                                    );
+            return messageContext;
         }
 
         public static void Debug(this IPassport self
@@ -53,6 +69,7 @@ namespace OCC.Passports.Common.Extensions
                                     , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
+                                    , int scopeDepth = -1
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
                                     , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
                                     , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
@@ -68,6 +85,7 @@ namespace OCC.Passports.Common.Extensions
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
+                , scopeDepth: scopeDepth
                 );
 
             self.Stamp(messageContext, includeContext, includeScopes);
@@ -79,6 +97,7 @@ namespace OCC.Passports.Common.Extensions
                                     , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
+                                    , int scopeDepth = -1
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
                                     , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
                                     , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
@@ -94,6 +113,7 @@ namespace OCC.Passports.Common.Extensions
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
+                , scopeDepth: scopeDepth
                 );
 
             self.Stamp(messageContext, includeContext, includeScopes);
@@ -105,6 +125,7 @@ namespace OCC.Passports.Common.Extensions
                                     , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
+                                    , int scopeDepth = -1
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
                                     , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
                                     , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
@@ -120,6 +141,7 @@ namespace OCC.Passports.Common.Extensions
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
+                , scopeDepth: scopeDepth
                 );
 
             self.Stamp(messageContext, includeContext, includeScopes);
@@ -131,6 +153,7 @@ namespace OCC.Passports.Common.Extensions
                                     , string user = ""
                                     , bool includeContext = false
                                     , bool includeScopes = false
+                                    , int scopeDepth = -1
                                     , [System.Runtime.CompilerServices.CallerMemberName] string memberName = ""
                                     , [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = ""
                                     , [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0
@@ -146,6 +169,7 @@ namespace OCC.Passports.Common.Extensions
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
+                , scopeDepth: scopeDepth
                 );
 
             self.Stamp(messageContext, includeContext, includeScopes);
@@ -176,7 +200,6 @@ namespace OCC.Passports.Common.Extensions
                                     , string messageTemplate
                                     , object[] messageTemplateData = null
                                     , string user = ""
-                                    , bool includeContext = false
                                     , bool includeScopes = false
                                     , string memberName = ""
                                     , string sourceFilePath = ""
@@ -193,9 +216,11 @@ namespace OCC.Passports.Common.Extensions
                 , memberName
                 , sourceFilePath
                 , sourceLineNumber
+                , logCaller: true
+                , scopeDepth: 0
                 );
 
-            self.Stamp(messageContext, includeContext, includeScopes);
+            self.Stamp(messageContext, includeCallContext: true, includeSnapshot: includeScopes);
         }
     }
 }

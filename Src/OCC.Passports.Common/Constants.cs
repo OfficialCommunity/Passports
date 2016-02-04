@@ -23,7 +23,7 @@
             public const string KeyHttpRequest = "HttpRequest";
             public const string KeyScopes =  "Scope";
             
-            public const string KeyScopesShort = "5";
+            public const string KeyScopesShort = "7";
 
             public const string KeyCallerMemberName = "CallerMemberName";
             public const string KeyCallerFilePath = "CallerFilePath";
@@ -34,6 +34,7 @@
 
             public const string KeyCurrentCallContext = "CurrentCallContext";
             public const string KeyParentCallContext = "ParentCallContext";
+            public const string KeyMember = "Member";
 
             public const string KeyEndOfRequest = "End of request ";
         }

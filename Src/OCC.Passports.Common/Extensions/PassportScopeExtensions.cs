@@ -43,7 +43,7 @@ namespace OCC.Passports.Common.Extensions
                     {
                         sw.Stop();
                         var ElapsedMilliseconds = sw.ElapsedMilliseconds;
-                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit, record: true);
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
                         sw = null;
                     }
 
@@ -67,7 +67,7 @@ namespace OCC.Passports.Common.Extensions
                     {
                         sw.Stop();
                         var ElapsedMilliseconds = sw.ElapsedMilliseconds;
-                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit, record: true);
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
                     }
 
                     self.Debug(Constants.Passports.KeyEndOfRequest, includeContext: true, includeScopes: true);
@@ -98,7 +98,7 @@ namespace OCC.Passports.Common.Extensions
                     {
                         sw.Stop();
                         var ElapsedMilliseconds = sw.ElapsedMilliseconds;
-                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit, record: true);
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
                         sw = null;
                     }
 
@@ -122,7 +122,7 @@ namespace OCC.Passports.Common.Extensions
                     {
                         sw.Stop();
                         var ElapsedMilliseconds = sw.ElapsedMilliseconds;
-                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit, record:true);
+                        self.Scope.Record(() => ElapsedMilliseconds, Constants.Passports.KeyOnExit);
                     }
 
                     //self.PopScope();
