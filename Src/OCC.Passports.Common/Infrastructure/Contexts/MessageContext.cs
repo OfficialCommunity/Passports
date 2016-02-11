@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using Newtonsoft.Json;
 using OCC.Passports.Common.Domains;
 
@@ -8,9 +9,14 @@ namespace OCC.Passports.Common.Infrastructure.Contexts
     [Serializable]
     public class MessageContext
     {
+        private static long _sequence = 0;
+
         public MessageContext()
         {
-            Timestamp = new DateTimeOffset(new DateTime(Stopwatch.GetTimestamp()).ToUniversalTime());
+            var s = (int) (Interlocked.Increment(ref _sequence) % 100000);
+            var t = DateTime.UtcNow;
+
+            Timestamp = new DateTimeOffset(new DateTime(t.Year, t.Month, t.Day, t.Hour, t.Minute, t.Second, s, DateTimeKind.Utc));
             Id = Guid.NewGuid();
         }
 
