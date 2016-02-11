@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E09DD79A-4488-4AB9-8D3F-A7EEE78BF432}") = "OCC.Passports.Nuget", "OCC.Passports.Nuget.nuproj", "{7BAA8FF0-B0B4-436B-8C8B-3D98E4A0D0B1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{63251506-5F18-4326-8FFA-05AB5C6856CE} = {63251506-5F18-4326-8FFA-05AB5C6856CE}
-		{5A083A4A-7432-4EB9-9259-D8CC59E06DCE} = {5A083A4A-7432-4EB9-9259-D8CC59E06DCE}
+		{12A45F53-40A6-44B1-BBD8-D769AA24433F} = {12A45F53-40A6-44B1-BBD8-D769AA24433F}
 		{EAA28178-A176-4149-93D7-246AB593B664} = {EAA28178-A176-4149-93D7-246AB593B664}
 		{B8677FF3-2242-4591-A6CA-69D73F599880} = {B8677FF3-2242-4591-A6CA-69D73F599880}
 	EndProjectSection
@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Common", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Common.Web", "..\Src\OCC.Passports.Common.Web\OCC.Passports.Common.Web.csproj", "{63251506-5F18-4326-8FFA-05AB5C6856CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Storage.Logentries", "..\Src\OCC.Passports.Storage.Logentries\OCC.Passports.Storage.Logentries.csproj", "{5A083A4A-7432-4EB9-9259-D8CC59E06DCE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Storage.Null", "..\Src\OCC.Passports.Storage.Null\OCC.Passports.Storage.Null.csproj", "{EAA28178-A176-4149-93D7-246AB593B664}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCC.Passports.Storage.Serilog", "..\Src\OCC.Passports.Storage.Serilog\OCC.Passports.Storage.Serilog.csproj", "{12A45F53-40A6-44B1-BBD8-D769AA24433F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +37,14 @@ Global
 		{63251506-5F18-4326-8FFA-05AB5C6856CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63251506-5F18-4326-8FFA-05AB5C6856CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63251506-5F18-4326-8FFA-05AB5C6856CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A083A4A-7432-4EB9-9259-D8CC59E06DCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A083A4A-7432-4EB9-9259-D8CC59E06DCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A083A4A-7432-4EB9-9259-D8CC59E06DCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A083A4A-7432-4EB9-9259-D8CC59E06DCE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAA28178-A176-4149-93D7-246AB593B664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAA28178-A176-4149-93D7-246AB593B664}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAA28178-A176-4149-93D7-246AB593B664}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAA28178-A176-4149-93D7-246AB593B664}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12A45F53-40A6-44B1-BBD8-D769AA24433F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12A45F53-40A6-44B1-BBD8-D769AA24433F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12A45F53-40A6-44B1-BBD8-D769AA24433F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12A45F53-40A6-44B1-BBD8-D769AA24433F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

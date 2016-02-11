@@ -17,10 +17,10 @@
     <Compile Include="OCC.Passports.Common.nuspec">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="OCC.Passports.Storage.Logentries.nuspec">
+    <Compile Include="OCC.Passports.Storage.Null.nuspec">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="OCC.Passports.Storage.Null.nuspec">
+    <Compile Include="OCC.Passports.Storage.Serilog.nuspec">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
