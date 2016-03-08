@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Remoting.Messaging;
 using Destructurama;
+using Microsoft.WindowsAzure.Storage;
 using OCC.Passports.Common.Contracts.Services;
 using OCC.Passports.Common.Domains;
 using OCC.Passports.Common.Extensions;
@@ -23,13 +24,17 @@ namespace OCC.Passports.Common.Sample.Console
             //    .WithHostname("passport")
             //    ;
 
+            var storage = CloudStorageAccount.DevelopmentStorageAccount;
+
             var rootLogger = new LoggerConfiguration()
-                .ReadFrom.AppSettings()
+                //.ReadFrom.AppSettings()
                 //.WriteTo.File("log.txt")
                 //.WriteTo.Sink(new FileSink(@"log.json", new JsonFormatter(false, null, true), null))
                 //.Enrich.FromLogContext()
                 //.Destructure.UsingAttributes()
                 .Destructure.JsonNetTypes()
+                .WriteTo.AzureTableStorageWithProperties(storage)
+                .MinimumLevel.Debug()
                 //.WriteTo.Loggly()
                 .CreateLogger();
             
